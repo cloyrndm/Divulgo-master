@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
+
+    <!-- Title Page-->
+    <title>Dashboard</title>
+
+    <!-- Fontfaces CSS-->
+    <link href="css/font-face.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+
+    <!-- Bootstrap CSS-->
+    <link href="vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+
+    <!-- Vendor CSS-->
+    <link href="vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
+    <link href="vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
+    <link href="vendor/wow/animate.css" rel="stylesheet" media="all">
+    <link href="vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
+    <link href="vendor/slick/slick.css" rel="stylesheet" media="all">
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="css/theme.css" rel="stylesheet" media="all">
+
+    <style>
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body class="animsition">
+<div class="page-wrapper">
+    <!-- HEADER MOBILE-->
+    <header class="header-mobile d-block d-lg-none">
+        <div class="header-mobile__bar">
+            <div class="container-fluid">
+                <div class="header-mobile-inner">
+                    <a class="logo" href="index.html">
+                        <img src="images/icon/divulgo.png" alt="CoolAdmin" />
+                    </a>
+                    <button class="hamburger hamburger--slider" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar-mobile">
+            <div class="container-fluid">
+                <ul class="navbar-mobile__list list-unstyled">
+                    <li class="has-sub">
+                        <a class="js-arrow" href="/goIndex">
+                            <i class="fas fa-tachometer-alt"></i>Train</a>
+
+                    </li>
+
+                    <li>
+                        <a href="/goTest">
+                            <i class="fas fa-copy"></i>Test</a>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- END HEADER MOBILE-->
+
+    <!-- MENU SIDEBAR-->
+    <aside class="menu-sidebar d-none d-lg-block">
+        <div class="logo">
+            <a href="#">
+                <img src="images/icon/divulgo.png" alt="Cool Admin" />
+            </a>
+        </div>
+        <div class="menu-sidebar__content js-scrollbar1">
+            <nav class="navbar-sidebar">
+                <ul class="list-unstyled navbar__list">
+                    <li class="active has-sub">
+                        <a class="js-arrow" href="/goIndex">
+                            <i class="fas fa-tachometer-alt"></i>Train</a>
+
+                    </li>
+
+                    <li>
+                        <a href="/goTest">
+                            <i class="fas fa-copy"></i>Test</a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+    </aside>
+    <!-- END MENU SIDEBAR-->
+
+    <!-- PAGE CONTAINER-->
+    <div class="page-container">
+        <!-- HEADER DESKTOP-->
+        <header class="header-desktop">
+            <div class="section__content section__content--p30">
+                <div class="container-fluid">
+                    <div class="header-wrap">
+                        <form class="form-header" action="/tfidf" method="POST">
+                            <!--<input class="au-input au-input&#45;&#45;xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />-->
+                            <button class="au-btn--submit" type="submit">
+                                Get TFIDF
+                                <!--<i class="zmdi zmdi-search"></i>-->
+                            </button>
+                        </form>
+                        <div class="account-wrap">
+                            <div class="account-item clearfix js-item-menu">
+                                <div class="image">
+                                    <img src="images/icon/person.png" alt="John Doe" />
+                                </div>
+                                <div class="content">
+                                    <a class="js-acc-btn" href="#">john doe</a>
+                                </div>
+                                <div class="account-dropdown js-dropdown">
+                                    <div class="info clearfix">
+                                        <div class="image">
+                                            <a href="#">
+                                                <img src="images/icon/person.png" alt="John Doe" />
+                                            </a>
+                                        </div>
+                                        <div class="content">
+                                            <h5 class="name">
+                                                <span th:text="${username}"></span>
+                                            </h5>
+                                            <span th:text="${email}"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="account-dropdown__footer">
+                                        <a href="#">
+                                            <i class="zmdi zmdi-power"></i>Logout</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- HEADER DESKTOP-->
+
+        <!-- MAIN CONTENT-->
+        <div class="main-content">
+            <div class="section__content section__content--p30">
+                <div class="container-fluid">
+                    Model Article Counter: <span th:text="${numArticles}"></span>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="au-card recent-report">
+                                <div class="tab">
+                                    <button class="tablinks" onclick="openMethod(event, 'URL')" id="defaultOpen">URL</button>
+                                    <button class="tablinks" onclick="openMethod(event, 'Text')">Text</button>
+                                    <button class="tablinks" onclick="openMethod(event, 'File Upload')">File Upload</button>
+                                </div>
+
+                                <div id="URL" class="tabcontent">
+                                    <div class="col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Input</strong> URL
+                                                <div class="card-body card-block">
+                                                    <form action="/postScrape" method="POST">
+
+                                                        <div class="row form-group">
+                                                            <div class="col col-sm-12">
+                                                                <label for="text-input" class=" form-control-label">URL Input</label>
+                                                            </div>
+                                                            <div class="col col-sm-12">
+                                                                <input type="text" name="url" placeholder="URL" class="form-control">
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row form-group">
+                                                            <div class="col col-md-3">
+                                                                <label for="select" class=" form-control-label">Select</label>
+                                                            </div>
+                                                            <br>
+                                                            <div class="col-12 col-md-9">
+                                                                <select name="agency" id="select" class="form-control">
+                                                                    <option value="0">Please select</option>
+                                                                    <option value="LTO">LTO</option>
+                                                                    <option value="LRA">LRA</option>
+                                                                    <option value="PAG-IBIG">PAG-IBIG</option>
+                                                                    <option value="SSS">SSS</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+
+
+                                                <div class="card-footer" th:inline="text">
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-dot-circle-o"></i> Submit
+                                                    </button>
+                                                </div>
+
+
+                                                <!--</form>-->
+                                                    <!--<form action="/tfidf" method="POST">-->
+                                                    <!--<div class="card-footer" th:inline="text">-->
+                                                        <!--<button type="submit" class="btn btn-primary btn-sm">-->
+                                                            <!--<i class="fa fa-dot-circle-o"></i> TFIDF-->
+                                                        <!--</button>-->
+                                                    <!--</div>-->
+                                                        <!--</form>-->
+                                                        <!--[[${msg}]]-->
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="Text" class="tabcontent">
+                                    <div class="col-md-9">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Input</strong> Information
+                                                <div class="card-body card-block">
+                                                    <form action="/postText" method="POST">
+
+
+                                                        <div class="row form-group">
+                                                            <div class="col col-sm-12">
+                                                                <label for="text-input" class=" form-control-label">Title</label>
+                                                            </div>
+                                                            <div class="col col-sm-12">
+                                                                <input type="text" placeholder="Title" name="title" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row form-group">
+                                                            <div class="col col-sm-12">
+                                                                <label for="text-input" class=" form-control-label">URL</label>
+                                                            </div>
+                                                            <div class="col col-sm-12">
+                                                                <input type="text" placeholder="URL" name="url" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row form-group">
+                                                            <div class="col col-sm-12">
+                                                                <label for="text-input" class=" form-control-label">Content</label>
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <textarea id="textarea-input" name="content" rows="9" cols="80" placeholder="Content" class="form-control"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row form-group">
+                                                            <div class="col col-md-3">
+                                                                <label for="select" class=" form-control-label">Select</label>
+                                                            </div>
+                                                            <br>
+                                                            <div class="col-12 col-md-9">
+                                                                <select name="agency" id="select" class="form-control">
+                                                                    <option value="0">Please select</option>
+                                                                    <option value="LTO">LTO</option>
+                                                                    <option value="LRA">LRA</option>
+                                                                    <option value="PAG-IBIG">PAG-IBIG</option>
+                                                                    <option value="SSS">SSS</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                <div class="card-footer">
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-dot-circle-o"></i> Submit
+                                                    </button>
+                                                </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="File Upload" class="tabcontent">
+                                    <div class="row form-group">
+                                        <div class="col col-md-3">
+                                            <label for="file-input" class=" form-control-label">File input</label>
+                                        </div>
+                                        <div class="col-12 col-md-9">
+                                            <input type="file" id="file-input" name="file-input" class="form-control-file">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- END MAIN CONTENT-->
+    <!-- END PAGE CONTAINER-->
+</div>
+
+</div>
+
+<script>
+    function openMethod(evt, methodName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(methodName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+</script>
+<!-- Jquery JS-->
+<script src="vendor/jquery-3.2.1.min.js"></script>
+<!-- Bootstrap JS-->
+<script src="vendor/bootstrap-4.1/popper.min.js"></script>
+<script src="vendor/bootstrap-4.1/bootstrap.min.js"></script>
+<!-- Vendor JS       -->
+<script src="vendor/slick/slick.min.js">
+</script>
+<script src="vendor/wow/wow.min.js"></script>
+<script src="vendor/animsition/animsition.min.js"></script>
+<script src="vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
+</script>
+<script src="vendor/counter-up/jquery.waypoints.min.js"></script>
+<script src="vendor/counter-up/jquery.counterup.min.js">
+</script>
+<script src="vendor/circle-progress/circle-progress.min.js"></script>
+<script src="vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="vendor/chartjs/Chart.bundle.min.js"></script>
+<script src="vendor/select2/select2.min.js">
+</script>
+
+<!-- Main JS-->
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
+<!-- end document-->

@@ -70,8 +70,6 @@
             border: 1px solid #ccc;
             border-top: none;
         }
-
-
     </style>
 </head>
 
@@ -161,6 +159,7 @@
         </div>
     </aside>
     <!-- END MENU SIDEBAR-->
+    <!-- END MENU SIDEBAR-->
 
     <!-- PAGE CONTAINER-->
     <div class="page-container">
@@ -218,26 +217,15 @@
                                 <table class="table table-borderless table-data3">
                                     <thead>
                                     <tr>
-                                        <th>Article ID</th>
-                                        <th>Title</th>
-                                        <th>Content</th>
-                                        <th>Agency</th>
-                                        <th>Ngram</th>
+                                        <th>Article IDs</th>
+
                                         <!--<th>Tf-Idf</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="i: ${articlelist}">
+                                    <tr th:each="i: ${val}">
                                         <td th:text="${i.artId}"></td>
-                                        <td th:text="${i.title}"></td>
-                                        <td th:text="${i.content}"></td>
-                                        <td th:text="${i.agency}"></td>
-                                        <form method = "POST" action = "/getSingleNgrams">
-                                            <input type="hidden" th:value="${i.artId}" name="id">
-                                            <td>
-                                                <button type="submit" id="erase1">NGRAM</button>
-                                            </td>
-                                        </form>
+
 
                                     </tr>
 
@@ -261,7 +249,24 @@
     </div>
 
 </div>
+<script>
+    function openMethod(evt, methodName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(methodName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
 
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+</script>
 <!-- Jquery JS-->
 <script src="vendor/jquery-3.2.1.min.js"></script>
 <!-- Bootstrap JS-->

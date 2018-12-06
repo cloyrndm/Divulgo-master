@@ -39,6 +39,9 @@ public class FrequencyService {
 
         return frequencyRepository.findAll();
     }
+    public Frequency findByNgramId(int ngramId){
+        return frequencyRepository.findByNgramId(ngramId);
+    }
 
 //    public List <Frequency> findByNgramIdandFreqId(int ngramId, int freqId) {
 //

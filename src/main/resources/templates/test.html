@@ -145,41 +145,7 @@
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <form class="form-header" action="" method="POST">
-                                <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />
-                                <button class="au-btn--submit" type="submit">
-                                    <i class="zmdi zmdi-search"></i>
-                                </button>
-                            </form>
-                             <div class="account-wrap">
-                                    <div class="account-item clearfix js-item-menu">
-                                        <div class="image">
-                                            <img src="images/icon/avatar-01.jpg" alt="John Doe" />
-                                        </div>
-                                        <div class="content">
-                                            <a class="js-acc-btn" href="#">john doe</a>
-                                        </div>
-                                        <div class="account-dropdown js-dropdown">
-                                            <div class="info clearfix">
-                                                <div class="image">
-                                                    <a href="#">
-                                                        <img src="images/icon/person.png" alt="John Doe" />
-                                                    </a>
-                                                </div>
-                                                <div class="content">
-                                                    <h5 class="name">
-                                                        <span th:text="${username}"></span>
-                                                    </h5>
-                                                    <span th:text="${email}"></span>
-                                                </div>
-                                            </div>
-                                            <div class="account-dropdown__footer">
-                                                <a href="#">
-                                                    <i class="zmdi zmdi-power"></i>Logout</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                         </div>
                     </div>
                 </div>
@@ -202,12 +168,12 @@
                             <div class="col-md-12">
                                 <div class="au-card recent-report">
                                     <div class="tab">
-                                    <button class="tablinks" onclick="openMethod(event, 'URL')" id="defaultOpen">URL</button>
-                                    <button class="tablinks" onclick="openMethod(event, 'Text')">Text</button>
-                                    <button class="tablinks" onclick="openMethod(event, 'File Upload')">File Upload</button>
+                                    <!--<button class="tablinks" onclick="openMethod(event, 'URL')" id="defaultOpen">URL</button>-->
+                                    <button class="tablinks" onclick="openMethod(event, 'Text')" id="defaultOpen">Text</button>
+                                    <!--<button class="tablinks" onclick="openMethod(event, 'File Upload')">File Upload</button>-->
                                 </div>
 
-                                <div id="URL" class="tabcontent">
+                                <div id="Text" class="tabcontent">
                                     <div class="col-sm-12">
                                 <div class="card">
                                     <div class="card-header">
@@ -218,7 +184,7 @@
 
                                             <div class="row form-group">
                                                 <div class="col col-sm-12">
-                                                    <label for="text-input" class=" form-control-label">Content</label>
+                                                    <label for="text-input" class=" form-control-label">Text</label>
                                                 </div>
                                                 <div class="col-md-9">
                                                     <textarea name="testcontent" id="textarea-input" rows="9" cols="80" placeholder="Content" class="form-control"></textarea>

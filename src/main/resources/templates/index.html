@@ -95,9 +95,20 @@
             <div class="container-fluid">
                 <ul class="navbar-mobile__list list-unstyled">
                     <li class="has-sub">
-                        <a class="js-arrow" href="/goIndex">
-                            <i class="fas fa-tachometer-alt"></i>Train</a>
+                        <a class="js-arrow" href="#">
+                            <i class="fas fa-desktop"></i>Train</a>
+                        <ul class="list-unstyled navbar__sub-list js-sub-list">
+                            <li>
+                                <a href="/goIndex">Input</a>
+                            </li>
+                            <li>
+                                <a href="/getArticles">Articles</a>
+                            </li>
+                            <li>
+                                <a href="/getAllNgrams">Ngrams</a>
+                            </li>
 
+                        </ul>
                     </li>
 
                     <li>
@@ -121,10 +132,21 @@
         <div class="menu-sidebar__content js-scrollbar1">
             <nav class="navbar-sidebar">
                 <ul class="list-unstyled navbar__list">
-                    <li class="active has-sub">
-                        <a class="js-arrow" href="/goIndex">
-                            <i class="fas fa-tachometer-alt"></i>Train</a>
+                    <li class="has-sub">
+                        <a class="js-arrow" href="#">
+                            <i class="fas fa-desktop"></i>Train</a>
+                        <ul class="list-unstyled navbar__sub-list js-sub-list">
+                            <li>
+                                <a href="/goIndex">Input</a>
+                            </li>
+                            <li>
+                                <a href="/getArticles">Articles</a>
+                            </li>
+                            <li>
+                                <a href="/getAllNgrams">Ngrams</a>
+                            </li>
 
+                        </ul>
                     </li>
 
                     <li>
@@ -137,6 +159,7 @@
         </div>
     </aside>
     <!-- END MENU SIDEBAR-->
+    <!-- END MENU SIDEBAR-->
 
     <!-- PAGE CONTAINER-->
     <div class="page-container">
@@ -145,43 +168,37 @@
             <div class="section__content section__content--p30">
                 <div class="container-fluid">
                     <div class="header-wrap">
-                        <form class="form-header" action="/tfidf" method="POST">
-                            <!--<input class="au-input au-input&#45;&#45;xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />-->
-                            <button class="au-btn--submit" type="submit">
-                                Get TFIDF
-                                <!--<i class="zmdi zmdi-search"></i>-->
-                            </button>
-                        </form>
-                        <div class="account-wrap">
-                            <div class="account-item clearfix js-item-menu">
-                                <div class="image">
-                                    <img src="images/icon/person.png" alt="John Doe" />
-                                </div>
-                                <div class="content">
-                                    <a class="js-acc-btn" href="#">john doe</a>
-                                </div>
-                                <div class="account-dropdown js-dropdown">
-                                    <div class="info clearfix">
-                                        <div class="image">
-                                            <a href="#">
-                                                <img src="images/icon/person.png" alt="John Doe" />
-                                            </a>
-                                        </div>
-                                        <div class="content">
-                                            <h5 class="name">
-                                                <span th:text="${username}"></span>
-                                            </h5>
-                                            <span th:text="${email}"></span>
-                                        </div>
-                                    </div>
 
-                                    <div class="account-dropdown__footer">
-                                        <a href="#">
-                                            <i class="zmdi zmdi-power"></i>Logout</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!--<div class="account-wrap">-->
+                            <!--<div class="account-item clearfix js-item-menu">-->
+                                <!--<div class="image">-->
+                                    <!--<img src="images/icon/person.png" alt="John Doe" />-->
+                                <!--</div>-->
+                                <!--<div class="content">-->
+                                    <!--<a class="js-acc-btn" href="#"><span th:text="${username}"></span></a>-->
+                                <!--</div>-->
+                                <!--<div class="account-dropdown js-dropdown">-->
+                                    <!--<div class="info clearfix">-->
+                                        <!--<div class="image">-->
+                                            <!--<a href="#">-->
+                                                <!--<img src="images/icon/person.png" alt="John Doe" />-->
+                                            <!--</a>-->
+                                        <!--</div>-->
+                                        <!--<div class="content">-->
+                                            <!--<h5 class="name">-->
+                                                <!--<span th:text="${username}"></span>-->
+                                            <!--</h5>-->
+                                            <!--<span th:text="${email}"></span>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+                                    <!--<div class="account-dropdown__footer">-->
+                                        <!--<a href="#">-->
+                                            <!--<i class="zmdi zmdi-power"></i>Logout</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -201,7 +218,7 @@
                                 <div class="tab">
                                     <button class="tablinks" onclick="openMethod(event, 'URL')" id="defaultOpen">URL</button>
                                     <button class="tablinks" onclick="openMethod(event, 'Text')">Text</button>
-                                    <button class="tablinks" onclick="openMethod(event, 'File Upload')">File Upload</button>
+                                    <!--<button class="tablinks" onclick="openMethod(event, 'File Upload')">File Upload</button>-->
                                 </div>
 
                                 <div id="URL" class="tabcontent">
@@ -245,9 +262,13 @@
                                                     <button type="submit" class="btn btn-primary btn-sm">
                                                         <i class="fa fa-dot-circle-o"></i> Submit
                                                     </button>
+
+                                                        <form class="form-header" action="/tfidf" method="POST">
+                                                            <!--<input class="au-input au-input&#45;&#45;xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />-->
+                                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                                <i class="fa fa-dot-circle-o"></i> Get TFIDF
+                                                        </form>
                                                 </div>
-
-
                                                 <!--</form>-->
                                                     <!--<form action="/tfidf" method="POST">-->
                                                     <!--<div class="card-footer" th:inline="text">-->

@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import org.tartarus.snowball.ext.PorterStemmer;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,9 +70,9 @@ public class HomeController {
     @RequestMapping("/getResult")
     public String result(HttpServletRequest request, Model model){
         String test = request.getParameter("testcontent");
-        Article article = articleService.findByContent(test);
-        String rAgency = article.getAgency();
-        System.out.println(rAgency);
+//        Article article = articleService.findByContent(test);
+//        String rAgency = article.getAgency();
+//        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
 
@@ -80,9 +82,10 @@ public class HomeController {
             stemmer.stem();
             String steem = stemmer.getCurrent();
             stemList.add(steem);
-            System.out.println("stemmer: " + steem);
-        }
+            System.out.println(steem);
 
+        }
+        System.out.println(stemList.size());
         List<Tfidf> tfidf6 = tfidfService.findAll();
         Double love = 0.0;
         Double lra = 0.0;
@@ -96,24 +99,34 @@ public class HomeController {
             if (stemList.contains(tfidf.getWord())) {
                 if (tfidf.getAgency().equals("LTO")) {
                     lto = lto + tfidf.getTfidfVal();
-                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-                    System.out.println("LTO value computation" + lto);
+//                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
+//                    System.out.println(tfidf.getWord() +" LTO value computation: " + lto + tfidf.getAgency());
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(lto);
+//                    System.out.println(tfidf.getAgency());          System.out.println(tfidf.getAgency());
+//                    System.out.println("---------------");
 
                 }
                 if (tfidf.getAgency().equals("LRA")) {
-                    lra = lra + tfidf.getTfidfVal();
-                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-                    System.out.println("LRA value computation" + lra);
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(lra);
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println("---------------");
                 }
                 if (tfidf.getAgency().equals("PAG-IBIG")) {
-                    love = love + tfidf.getTfidfVal();
-                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-                    System.out.println("PAG-IBIG value computation" + love);
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(love);
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println("---------------");
                 }
                 if (tfidf.getAgency().equals("SSS")) {
-                    sss = sss + tfidf.getTfidfVal();
-                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-                    System.out.println("SSS value computation" + sss);
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(sss);
+//                    System.out.println("---------------");
                 }
 
             }
@@ -124,29 +137,29 @@ public class HomeController {
         }
         result = maxVal(entry);
 
-        System.out.println("-----------RESULT-------------");
-        for (Map.Entry<String, Double> e : result.entrySet()) {
-            Test test1 = new Test();
-            if(article.getAgency().equals(e.getKey())){
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
-                test1.setPredictedAgency(e.getKey());
-                test1.setResultl("CORRECT");
-                test1.setPhase("8");
-                testService.save(test1);
-                model.addAttribute("result","CORRECT");
-            }
-            else{
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
-                test1.setPredictedAgency(e.getKey());
-                test1.setResultl("INCORRECT");
-                test1.setPhase("8");
-                testService.save(test1);
-                model.addAttribute("result","INCORRECT");
-            }
-
-        }
+//        System.out.println("-----------RESULT-------------");
+//        for (Map.Entry<String, Double> e : result.entrySet()) {
+//            Test test1 = new Test();
+//            if(article.getAgency().equals(e.getKey())){
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("CORRECT");
+//                test1.setPhase("8");
+//                testService.save(test1);
+//                model.addAttribute("result","CORRECT");
+//            }
+//            else{
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("INCORRECT");
+//                test1.setPhase("8");
+//                testService.save(test1);
+//                model.addAttribute("result","INCORRECT");
+//            }
+//
+//        }
         return "test";
     }
 
@@ -322,67 +335,132 @@ public class HomeController {
         return "index";
     }
 
+//    @GetMapping(value="/getArticles")
+//    public String getArticles(Model map){
+//        List<Article> articlelist = articleService.getAll();
+//        map.addAttribute("articlelist",articlelist);
+//        return "articles";
+//    }
+//
+//    @GetMapping(value="/getFreq")
+//    public String getFreq(HttpServletRequest request) {
+//        int number= freService.getAll().size();
+//        int artId=Integer.parseInt(request.getParameter("artId"));
+//        List<String> allWords = new ArrayList<String>();
+//        List<Integer> allFreq = new ArrayList<Integer>();
+////        Frequency sampleFreq = freService.findByArtId(artId);
+//
+//        for (int c=0; c< number; c++){
+//            Frequency sampleFreq = freService.findByArtId(artId);
+//            String thisWord= sampleFreq.getWord();
+//            int thisFreq=sampleFreq.getFrequency();
+//            allWords.add(thisWord);
+//            allFreq.add(thisFreq);
+//        }
+//
+//        return "docu";
+//    }
+//    @GetMapping(value="/getExam")
+//    public String getExam(Model map){
+////        Ngram ngram =findbyAll();
+//        List <Article> arts = articleService.getAll();
+//        List <Ngram> ngram = ngramService.getAll();
+//        List <Frequency> freq = freService.getAll();
+//        List <Frequency> temp = new ArrayList<>();
+////        for (int j=0; j<freq.size(); j++) {
+////            for (int i = 0; i < freq.size(); i++) {
+////                temp = freService.findByFreqId(freq.get(i).getNgramId());
+////                System.out.println(temp);
+////
+////            }
+////        }
+//////                Frequency sampleFreq= freService.findByNgramId(temp);
+////                System.out.println(freq.get(j).getFrequency());
+////            }
+//
+////        List<Ngram> ngramlist = ngramService.getAll();
+////        Ngram ngram = ngramService.getAll();
+////        Frequency freq = freService.getAll();
+////        List <Frequency> fre1 = freService.findByNgramIdandFreqId(ngram.getNgramId(), freq.getFreqId());
+//////        Collections.sort(ngramlist);
+//        map.addAttribute("freq",freq);
+//
+//        map.addAttribute("arts",arts);
+////        map.addAttribute("freq",freq);
+////        int col = wordlist.size();
+//
+//
+//        return "docu";
+//    }
+//
+////    public String error(){
+////        return "index";
+////    }
+
+    @GetMapping(value="/getAllNgrams")
+    public String getNgrams(HttpServletRequest request, Model map){
+        List<Ngram> ngramlist = ngramService.getAll();
+        System.out.println("Before: " + Arrays.toString(ngramlist.toArray(new Ngram[0])));
+
+        Collections.sort(ngramlist, new Comparator<Ngram>() {
+            public int compare(final Ngram keyValue1, final Ngram keyValue2) {
+                return keyValue1.getWords().compareTo(keyValue2.getWords());
+            }
+        });
+
+        System.out.println(ngramlist);
+        map.addAttribute("ngramlist",ngramlist);
+        return "ngrams";
+    }
     @GetMapping(value="/getArticles")
     public String getArticles(Model map){
         List<Article> articlelist = articleService.getAll();
         map.addAttribute("articlelist",articlelist);
         return "articles";
     }
+    @RequestMapping("/getArticleIds")
+    public String getArticlesIds(HttpServletRequest request, ModelMap m, Model model) {
+        String id = request.getParameter("id");
+        Integer id1 = Integer.valueOf(id);
+        List<Frequency> frequency = freService.getAll();
+        List<Integer> val = new ArrayList<Integer>();
 
-    @GetMapping(value="/getFreq")
-    public String getFreq(HttpServletRequest request) {
-        int number= freService.getAll().size();
-        int artId=Integer.parseInt(request.getParameter("artId"));
-        List<String> allWords = new ArrayList<String>();
-        List<Integer> allFreq = new ArrayList<Integer>();
-//        Frequency sampleFreq = freService.findByArtId(artId);
 
-        for (int c=0; c< number; c++){
-            Frequency sampleFreq = freService.findByArtId(artId);
-            String thisWord= sampleFreq.getWord();
-            int thisFreq=sampleFreq.getFrequency();
-            allWords.add(thisWord);
-            allFreq.add(thisFreq);
+        for (int i = 0; i < frequency.size(); i++) {
+            if (id1.equals(frequency.get(i).getNgramId())) {
+                Frequency freq = freService.findByNgramId(frequency.get(i).getNgramId());
+                val.add(freq.getArtId());
+            }
         }
+        System.out.println(val);
+        m.addAttribute("val", val);
 
-        return "docu";
-    }
-    @GetMapping(value="/getExam")
-    public String getExam(Model map){
-//        Ngram ngram =findbyAll();
-        List <Article> arts = articleService.getAll();
-        List <Ngram> ngram = ngramService.getAll();
-        List <Frequency> freq = freService.getAll();
-        List <Frequency> temp = new ArrayList<>();
-//        for (int j=0; j<freq.size(); j++) {
-//            for (int i = 0; i < freq.size(); i++) {
-//                temp = freService.findByFreqId(freq.get(i).getNgramId());
-//                System.out.println(temp);
-//
-//            }
-//        }
-////                Frequency sampleFreq= freService.findByNgramId(temp);
-//                System.out.println(freq.get(j).getFrequency());
-//            }
-
-//        List<Ngram> ngramlist = ngramService.getAll();
-//        Ngram ngram = ngramService.getAll();
-//        Frequency freq = freService.getAll();
-//        List <Frequency> fre1 = freService.findByNgramIdandFreqId(ngram.getNgramId(), freq.getFreqId());
-////        Collections.sort(ngramlist);
-        map.addAttribute("freq",freq);
-
-        map.addAttribute("arts",arts);
-//        map.addAttribute("freq",freq);
-//        int col = wordlist.size();
-
-
-        return "docu";
+        return "sample";
     }
 
-//    public String error(){
-//        return "index";
-//    }
+    @RequestMapping("/getSingleNgrams")
+    public String getSingleNgrams(HttpServletRequest request, ModelMap m, Model model) {
+        String id = request.getParameter("id");
+        Integer id1 = Integer.valueOf(id);
+
+        HashMap<String, Integer> nbysingle = new HashMap<>();
+        System.out.println(id1);
+        List<Frequency> frequency = freService.getAll();
+//        ArrayList<String> k = new
+
+
+        for (int i = 0; i < frequency.size(); i++) {
+            System.out.println(frequency.get(i).getArtId());
+            if (id1.equals(frequency.get(i).getArtId())) {
+                Ngram ngram = ngramService.findByNgramId(frequency.get(i).getNgramId());
+                nbysingle.put(ngram.getWords(), ngram.getWordCount());
+            }
+        }
+        m.addAttribute("singleN",nbysingle);
+//        for()
+        return "singleNgram";
+    }
+
 
     @PostMapping("/cleanContent")
     public String cleanContent(String content) throws IOException {

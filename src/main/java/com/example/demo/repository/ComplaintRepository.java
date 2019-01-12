@@ -14,6 +14,8 @@ public interface ComplaintRepository extends JpaRepository<Complaint,Long> {
     Complaint findByComplaintId(Long id);
     List<Complaint> findByAgency(String type);
     List<Complaint> findByAgencyAndStatus(String agency, String stat);
+    List<Complaint> findByTrainStatus(String status);
+
     List<Complaint> findByStatus(String status);
 //
 //    void merge(Complaint complaint);

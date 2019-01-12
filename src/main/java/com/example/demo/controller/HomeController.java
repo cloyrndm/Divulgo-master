@@ -53,6 +53,15 @@ public class HomeController {
     @Autowired
     TestService testService;
 
+    @Autowired
+    ClassifierController classifierController;
+
+    @Autowired
+    ComplaintService complaintService;
+
+    @Autowired
+    TfIdfController tfIdfController;
+
     @RequestMapping("/registration")
     public String gotoRegistration(){
         return "register";
@@ -66,13 +75,45 @@ public class HomeController {
 
         return "test";
     }
+//-----retraining happens in admin
+    @RequestMapping("/tempretrain")
+    public String tempretrain(Model model){
+       List<Complaint> complaint = complaintService.findByTrainStatus(null);
+        model.addAttribute("data",complaint);
+        return "test/retrain";
+    }
 
+    @RequestMapping("/retrain")
+    public String retrain(HttpServletRequest request,Model model) throws IOException {
+        String data = request.getParameter("data");
+        String cid = request.getParameter("complaintid");
+
+        Article article = new Article();
+        article.setContent(data);
+        articleService.save(article);
+
+        Complaint complaint1 = complaintService.findByComplaintId(Long.valueOf(cid));
+        complaint1.setTrainStatus("1");
+        complaintService.save(complaint1);
+
+        cleanContent(data);
+        tfIdfController.TermFrequency();
+        tfIdfController.InverseTermFrequency();
+        tfIdfController.TermFrequencyAndInverseTermFrequency();
+        List<Complaint> complaint = complaintService.findByTrainStatus(null);
+
+//        complaint.set()
+        model.addAttribute("data",complaint);
+        return "test/retrain";
+//        return "retrain";
+    }
+//----------------------------
     @RequestMapping("/getResult")
     public String result(HttpServletRequest request, Model model){
         String test = request.getParameter("testcontent");
-//        Article article = articleService.findByContent(test);
-//        String rAgency = article.getAgency();
-//        System.out.println(rAgency);
+        Article article = articleService.findByContent(test);
+        String rAgency = article.getAgency();
+        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
 
@@ -129,54 +170,45 @@ public class HomeController {
 //                    System.out.println("---------------");
                 }
 
+
             }
             entry.put("LTO", lto);
             entry.put("LRA", lra);
             entry.put("PAG-IBIG", love);
             entry.put("SSS", sss);
         }
-        result = maxVal(entry);
+        result = classifierController.maxVal(entry);
 
-//        System.out.println("-----------RESULT-------------");
-//        for (Map.Entry<String, Double> e : result.entrySet()) {
-//            Test test1 = new Test();
-//            if(article.getAgency().equals(e.getKey())){
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("CORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","CORRECT");
-//            }
-//            else{
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("INCORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","INCORRECT");
-//            }
-//
-//        }
+//        Article article = articleService.findAll();
+
+
+        System.out.println("-----------RESULT-------------");
+        for (Map.Entry<String, Double> e : result.entrySet()) {
+            Test test1 = new Test();
+            if(article.getAgency().equals(e.getKey())){
+                test1.setArticleid(article.getArtId());
+                test1.setActualAgency(article.getAgency());
+                test1.setPredictedAgency(e.getKey());
+                test1.setResultl("CORRECT");
+                test1.setPhase("testtest");
+                testService.save(test1);
+                model.addAttribute("result","CORRECT");
+            }
+            else{
+                test1.setArticleid(article.getArtId());
+                test1.setActualAgency(article.getAgency());
+                test1.setPredictedAgency(e.getKey());
+                test1.setResultl("INCORRECT");
+                test1.setPhase("testtest");
+                testService.save(test1);
+                model.addAttribute("result","INCORRECT");
+            }
+
+        }
         return "test";
     }
 
-    public HashMap<String, Double> maxVal(HashMap<String, Double> values){
-        HashMap<String, Double> max = new HashMap<>();
-        Double maxval = 0.0;
-        for (Map.Entry<String, Double> entry : values.entrySet()) {
-            if(entry.getValue()>maxval){
-                maxval = entry.getValue();
-            }
-        }
 
-        for (Map.Entry<String, Double> entry : values.entrySet())
-            if(entry.getValue()==maxval)
-                max.put(entry.getKey(),entry.getValue());
-        return max;
-    }
 
     @RequestMapping("/goLogout")
     public String goLogout(){
@@ -232,6 +264,30 @@ public class HomeController {
         return "index";
     }
 
+//    @RequestMapping("/t")
+//    public String p(){
+//        return "govhtml/prac";
+//    }
+//
+//    @RequestMapping("/testFunction")
+//    public String prac(HttpServletRequest r) throws IOException {
+//        String content = r.getParameter("content");
+//        ArrayList<String> w = removeStopWords(content);
+//        System.out.println("remove stop");
+//        for(String ww:w){
+//            System.out.println(ww);
+//        }
+//
+//        ArrayList<String> s = stemming(w);
+//
+//        System.out.println("Stem");
+//        for(String ss:s){
+//            System.out.println(ss);
+//        }
+//
+//        return "govhtml/prac";
+//    }
+
     @PostMapping("/postScrape")
     public String scrape(HttpServletRequest request, Model model) throws IOException {
         Article article = new Article();
@@ -246,6 +302,7 @@ public class HomeController {
         Matcher m=mb.matcher( url );
         Matcher a=abs.matcher( url );
         Matcher t=manila.matcher( url );
+        //------------------------------------------------------------
         Matcher i=inquirer.matcher( url );
         Matcher g=gma.matcher( url );
         Matcher s=sun.matcher( url );
@@ -448,7 +505,6 @@ public class HomeController {
         List<Frequency> frequency = freService.getAll();
 //        ArrayList<String> k = new
 
-
         for (int i = 0; i < frequency.size(); i++) {
             System.out.println(frequency.get(i).getArtId());
             if (id1.equals(frequency.get(i).getArtId())) {
@@ -461,19 +517,13 @@ public class HomeController {
         return "singleNgram";
     }
 
-
-    @PostMapping("/cleanContent")
-    public String cleanContent(String content) throws IOException {
-
+    public ArrayList<String> removeStopWords(String content) throws IOException {
         System.out.println("done scrape");
         File file = new File("C:\\Users\\Cloie Andrea\\IdeaProjects\\Divulgo-master\\stopwords.txt");
         Set<String> stopWords = new LinkedHashSet<String>();
-        List<String> ngrams = new ArrayList<String>();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String regex = "[A-Z]+";
         Pattern r = Pattern.compile(regex);
-        int wc=0, tempWC=0;
-        String changeWord;
 
         String[] words =content.replaceAll("[^a-zA-Z ]", "").split("\\s+");
 
@@ -482,7 +532,6 @@ public class HomeController {
         br.close();
 
         ArrayList<String> wordsList = new ArrayList<String>();
-        ArrayList<String> stemList = new ArrayList<String>();
         for (String word : words) {
             System.out.println(word);
             wordsList.add(word);
@@ -508,9 +557,12 @@ public class HomeController {
 
             }
         }
+        return wordsList;
+    }
 
-
-        for (String a:wordsList){
+    public ArrayList<String> stemming(ArrayList<String> words){
+        ArrayList<String> stemList = new ArrayList<String>();
+        for (String a:words){
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(a);
             stemmer.stem();
@@ -521,6 +573,96 @@ public class HomeController {
 
 
         System.out.println("DONE STEMMING");
+
+        return stemList;
+    }
+
+    
+// unclassified------------------------------------
+    @RequestMapping("/unclass")
+    public String unclass(Model model){
+        List<Complaint> complaint = complaintService.findByAgency("Unclassified");
+        model.addAttribute("unclassified_data",complaint);
+        return "test/unclass";
+    }
+
+    @RequestMapping("/unclassified")
+    public String unclassified(Model model,HttpServletRequest request){
+        String cid = request.getParameter("id");
+        String agency = request.getParameter("agency");
+        Complaint complaint1 = complaintService.findByComplaintId(Long.valueOf(cid));
+        complaint1.setAgency(agency);
+        complaintService.save(complaint1);
+
+        List<Complaint> complaint = complaintService.findByAgency("Unclassified");
+        model.addAttribute("unclassified_data",complaint);
+        return "test/unclass";
+    }
+//----------------------------------------
+
+
+    @PostMapping("/cleanContent")
+    public String cleanContent(String content) throws IOException {
+
+//        System.out.println("done scrape");
+//        File file = new File("C:\\Users\\Cloie Andrea\\IdeaProjects\\Divulgo-master\\stopwords.txt");
+//        Set<String> stopWords = new LinkedHashSet<String>();
+//        List<String> ngrams = new ArrayList<String>();
+//        BufferedReader br = new BufferedReader(new FileReader(file));
+//        String regex = "[A-Z]+";
+//        Pattern r = Pattern.compile(regex);
+        int wc=0, tempWC=0;
+//        String changeWord;
+//
+//        String[] words =content.replaceAll("[^a-zA-Z ]", "").split("\\s+");
+//
+//        for(String line;(line = br.readLine()) != null;)
+//            stopWords.add(line.trim());
+//        br.close();
+//
+//        ArrayList<String> wordsList = new ArrayList<String>();
+//        ArrayList<String> stemList = new ArrayList<String>();
+//        for (String word : words) {
+//            System.out.println(word);
+//            wordsList.add(word);
+//        }
+//
+//        Iterator<String> itr =wordsList.iterator();
+//
+//        while (itr.hasNext()) {
+//
+//            String w = itr.next();
+//            Matcher m = r.matcher(w);
+//            if (m.find()) {
+//                itr.remove();
+//                System.out.println("removed capital");
+//                System.out.println("--------------------");
+//
+//            }
+//
+//            else if (stopWords.contains(w)) {
+//                itr.remove();
+//                System.out.println("remove stop");
+//                System.out.println("--------------------");
+//
+//            }
+//        }
+//
+//
+//        for (String a:wordsList){
+//            PorterStemmer stemmer = new PorterStemmer();
+//            stemmer.setCurrent(a);
+//            stemmer.stem();
+//            String steem=stemmer.getCurrent();
+//            stemList.add(steem);
+//            System.out.println("stemmer: "+ steem);
+//        }
+//
+//
+//        System.out.println("DONE STEMMING");
+
+        ArrayList<String> wordsList = removeStopWords(content);
+        ArrayList<String> stemList = stemming(wordsList);
 
         Article sampleContent = articleService.findByContent(content);
         int articleid = sampleContent.getArtId();

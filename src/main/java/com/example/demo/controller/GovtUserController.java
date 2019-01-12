@@ -125,68 +125,48 @@ public class GovtUserController {
         return "govhtml/homepage";
     }
 
-    @RequestMapping("govviewcomplaints")
-    private String viewcomplaints(HttpSession session,Model model,ModelMap map){
-        String type = (String)session.getAttribute("type");
-        Long userid = (Long)session.getAttribute("userid");
-        List<ComplaintReply> complaintReply = complaintReplyService.findByAgencyAndUserid(type,userid);
-
-        if(type.equals("PAG")){
-            model.addAttribute("viewcomplaint",complaintReply);
-            map.addAttribute("img","/images/love.png");
-            return "govhtml/viewcomplaints";
-        }
-
-        if(type.equals("LRA")){
-            model.addAttribute("viewcomplaint",complaintReply);
-            map.addAttribute("img","/images/lra.png");
-            return "govhtml/viewcomplaints";
-        }
-        if(type.equals("LTO")){
-            model.addAttribute("viewcomplaint",complaintReply);
-            map.addAttribute("img","/images/lto.png");
-            return "govhtml/viewcomplaints";
-        }
-        if(type.equals("SSS")) {
-            model.addAttribute("viewcomplaint", complaintReply);
-            map.addAttribute("img", "/images/sss.png");
-            return "govhtml/viewcomplaints";
-        }
-        return "homepage";
-    }
+//    @RequestMapping("govviewcomplaints")
+//    private String viewcomplaints(HttpSession session,Model model,ModelMap map){
+//        String type = (String)session.getAttribute("type");
+//        Long userid = (Long)session.getAttribute("userid");
+//        List<ComplaintReply> complaintReply = complaintReplyService.findByAgencyAndUserid(type,userid);
+//
+//        if(type.equals("PAG")){
+//            model.addAttribute("viewcomplaint",complaintReply);
+//            map.addAttribute("img","/images/love.png");
+//            return "govhtml/viewcomplaints";
+//        }
+//
+//        if(type.equals("LRA")){
+//            model.addAttribute("viewcomplaint",complaintReply);
+//            map.addAttribute("img","/images/lra.png");
+//            return "govhtml/viewcomplaints";
+//        }
+//        if(type.equals("LTO")){
+//            model.addAttribute("viewcomplaint",complaintReply);
+//            map.addAttribute("img","/images/lto.png");
+//            return "govhtml/viewcomplaints";
+//        }
+//        if(type.equals("SSS")) {
+//            model.addAttribute("viewcomplaint", complaintReply);
+//            map.addAttribute("img", "/images/sss.png");
+//            return "govhtml/viewcomplaints";
+//        }
+//        return "homepage";
+//    }
 
 
 
     @RequestMapping("govcorrection")
     private String correction(HttpServletRequest request,HttpSession session, Model model,ModelMap map,ComplaintReply complaintReply) throws IOException {
-//        HttpServletRequest request1 = new HttpServletRequest();
-//        Model model1 = new Model()
 
-        String complaint = request.getParameter("complaint");
         String agency = request.getParameter("agency");
         String id = request.getParameter("id");
         long idd = Long.valueOf(id);
 
-
-
         Complaint complaint1 = complaintService.findByComplaintId(idd);
         complaint1.setAgency(agency);
-//        complaint1.setTrainStatus("1");
-//        complaint1.setTrain_status();
         complaintService.save(complaint1);
-
-
-            Article article = new Article();
-            article.setContent(complaint);
-            article.setAgency(agency);
-            article.setTitle("retrain");
-            articleService.save(article);
-
-        homeController.cleanContent(complaint);
-        tfIdfController.TermFrequency();
-        tfIdfController.InverseTermFrequency();
-        tfIdfController.clean();
-        tfIdfController.TermFrequencyAndInverseTermFrequency();
 
             String type = (String) session.getAttribute("type");
             List<Complaint> complaint2 = govtUserService.findByAgencyAndStatus(type, null);
@@ -236,20 +216,21 @@ public class GovtUserController {
         String time = formatter2.format(date);
         String status = null;
 
-        String complaintt = request.getParameter("complaint");
-        System.out.println(complaintt);
+//        String complaintt = request.getParameter("complaint");
+//        System.out.println(complaintt);
+//
+//        Article article = new Article();
+//        article.setContent(complaintt);
+//        article.setAgency(agency);
+//        article.setTitle("train");
+//        articleService.save(article);
 
-        Article article = new Article();
-        article.setContent(complaintt);
-        article.setAgency(agency);
-        article.setTitle("train");
-        articleService.save(article);
-
-        homeController.cleanContent(complaintt);
-        tfIdfController.TermFrequency();
-        tfIdfController.InverseTermFrequency();
-        tfIdfController.clean();
-        tfIdfController.TermFrequencyAndInverseTermFrequency();
+//training happens in the admin side
+//        homeController.cleanContent(complaintt);
+//        tfIdfController.TermFrequency();
+//        tfIdfController.InverseTermFrequency();
+//        tfIdfController.clean();
+//        tfIdfController.TermFrequencyAndInverseTermFrequency();
 
 //      --------------------save to database---------------------
         complaintReply.setComplaintId(Long.parseLong(complaintId));

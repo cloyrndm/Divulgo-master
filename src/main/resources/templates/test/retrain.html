@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TF-IDF</title>
+    <style>
+        .thumbnail{
+            position: relative;
+            z-index: 0;
+        }
+        .thumbnail:hover{
+            background-color: transparent;
+            z-index: 50;
+        }
+        .thumbnail span{ /*CSS for enlarged image*/
+            position: absolute;
+            background-color: lightyellow;
+            padding: 5px;
+            left: -1000px;
+            border: 1px dashed gray;
+            visibility: hidden;
+            color: black;
+            text-decoration: none;
+        }
+        .thumbnail span img{ /*CSS for enlarged image*/
+            border-width: 0;
+            padding: 2px;
+            /*width: 250px;*/
+            /*height: 250px;*/
+        }
+        .thumbnail:hover span{ /*CSS for enlarged image on hover*/
+            visibility: visible;
+            top: 0;
+            left: 60px; /*position where enlarged image should offset horizontally */
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" type="text/css" href="css/govcss/tfidf.css">
+    <script type="text/javascript" src="js/govcss/tfidf.js"></script>
+    <!--   boostrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <table id="example" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th>Data</th>
+                <th>Submit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <form method = "POST" action = "retrain">
+            <tr th:each="d : ${data}">
+                <td th:text="${d.user_complaint}"></td>
+                <!--<td th:text="${complaints.date}"></td>-->
+                <!--<td th:text="${complaints.time}"></td>-->
+                <!--<td th:text="${complaints.user_complaint}"></td>-->
+                <div class="instructions"></div>
+                <td>
+                    <a class="thumbnail" href="#thumb"><img th:src="${complaints.file_path}" width="80px" height="45px" border="0" /><span><img th:src="${complaints.file_path}"  width="250px" height="400px"  /><br />Image Preview</span></a>
+                </td>
+
+                <!--</form>-->
+
+                    <input type="hidden" th:value="${complaints.complaint_id}" name="complaintid">
+                    <td>
+                        <div id="container">
+                            <div class="buttonInside">
+                                <button type="submit" id="erase">&#9993;</button>
+                            </div>
+                        </div>
+                    </td>
+
+                </form>
+
+            </tr>
+            </tbody>
+
+
+        </table>
+    </div>
+</div>
+</body>
+</html>

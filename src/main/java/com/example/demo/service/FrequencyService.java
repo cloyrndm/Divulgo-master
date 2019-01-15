@@ -26,6 +26,10 @@ public class FrequencyService {
         return frequencyRepository.findByArtId(artId);
     }
 
+    public Frequency findByFreqId(int freqId){
+        return frequencyRepository.findByFreqId(freqId);
+    }
+
     public Frequency findByArtIdAndFreqId(int ai, int fi){
         return frequencyRepository.findByArtIdAndFreqId(ai,fi);
     }

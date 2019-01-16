@@ -2,8 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.*;
 
+import com.example.demo.repository.TestRepository;
+import com.example.demo.repository.TfidfRepository;
 import com.example.demo.service.*;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.tomcat.jni.Error;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -18,6 +21,10 @@ import org.tartarus.snowball.ext.PorterStemmer;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.lang.reflect.Array;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -248,65 +255,150 @@ public class HomeController {
 
         Article sampleUrl = articleService.findByUrl(url);
 
-            if (sampleUrl != null) {
-                return "error";
-            } else {
+        if (sampleUrl != null) {
+            return "error";
+        } else {
 
-                if (a.find()) {
-                    System.out.println("THIS IS ABS CBN");
-                    Document document = Jsoup.connect(url).get();
-                    String title = document.title();
-                    String text = document.select("div.article-content").text();
-                    System.out.println("title:" + title);
-                    System.out.println("article" + text);
-                    article.setTitle(title);
-                    article.setAgency(agency);
-                    article.setUrl(url);
-                    article.setContent(text);
-                    articleService.save(article);
-                        cleanContent(text);
-                } else if (t.find()) {
-                    System.out.println("THIS IS MANILATIMES");
-                    Document document = Jsoup.connect(url).get();
-                    String title = document.title();
-                    System.out.println("title:" + title);
+            if (a.find()) {
+                System.out.println("THIS IS ABS CBN");
+                Document document = Jsoup.connect(url).get();
+                String title = document.title();
+                String text = document.select("div.article-content").text();
+                System.out.println("title:" + title);
+                System.out.println("article" + text);
+                article.setTitle(title);
+                article.setAgency(agency);
+                article.setUrl(url);
+                article.setContent(text);
+                articleService.save(article);
+//                    try {
+                cleanContent(text);
+//                        model.addAttribute("msg","successful web scraping");
+//                        return "index";
+//                    }
+//                    catch (Exception e){
+//                        model.addAttribute("msg","web scraping error");
+//                        return "index";
+//                    }
+            } else if (t.find()) {
+                System.out.println("THIS IS MANILATIMES");
+                Document document = Jsoup.connect(url).get();
+                String title = document.title();
+                System.out.println("title:" + title);
 
-                    String text = document.select("div.article-wrap").text();
+                String text = document.select("div.article-wrap").text();
 
-                    System.out.println("article" + text);
-                    article.setTitle(title);
-                    article.setAgency(agency);
-                    article.setUrl(url);
-                    article.setContent(text);
-                    articleService.save(article);
-                        cleanContent(text);
-                } else if (m.find()) {
-                    System.out.println("THIS IS MANILA BULLETIN");
-                    Document document = Jsoup.connect(url).get();
-                    String title = document.title();
-                    System.out.println("title:" + title);
+                System.out.println("article" + text);
+                article.setTitle(title);
+                article.setAgency(agency);
+                article.setUrl(url);
+                article.setContent(text);
+                articleService.save(article);
+//                    try {
+                cleanContent(text);
+//                        model.addAttribute("msg","successful web scraping");
+//                        return "index";
+//                    }
+//                    catch (Exception e){
+//                        model.addAttribute("msg","web scraping error");
+//                        return "index";
+//                    }
+            } else if (m.find()) {
+                System.out.println("THIS IS MANILA BULLETIN");
+                Document document = Jsoup.connect(url).get();
+                String title = document.title();
+                System.out.println("title:" + title);
 
-                    String text = document.select("article.uk-article").text();
+                String text = document.select("article.uk-article").text();
 
-                    System.out.println("article" + text);
-                    article.setTitle(title);
-                    article.setAgency(agency);
-                    article.setUrl(url);
-                    article.setContent(text);
-                    articleService.save(article);
-                        cleanContent(text);
-                }
-
+                System.out.println("article" + text);
+                article.setTitle(title);
+                article.setAgency(agency);
+                article.setUrl(url);
+                article.setContent(text);
+                articleService.save(article);
+//                    try {
+                cleanContent(text);
+//                        model.addAttribute("msg","successful web scraping");
+//                        return "index";
+//                    }
+//                    catch (Exception e){
+//                        model.addAttribute("msg","web scraping error");
+//                        return "index";
+//                    }
             }
+
+        }
 
 
         return "index";
     }
     @PostMapping("/postFile")
-     public String postFile(){
+    public String postFile(){
         return "index";
     }
 
+//    @GetMapping(value="/getArticles")
+//    public String getArticles(Model map){
+//        List<Article> articlelist = articleService.getAll();
+//        map.addAttribute("articlelist",articlelist);
+//        return "articles";
+//    }
+//
+//    @GetMapping(value="/getFreq")
+//    public String getFreq(HttpServletRequest request) {
+//        int number= freService.getAll().size();
+//        int artId=Integer.parseInt(request.getParameter("artId"));
+//        List<String> allWords = new ArrayList<String>();
+//        List<Integer> allFreq = new ArrayList<Integer>();
+////        Frequency sampleFreq = freService.findByArtId(artId);
+//
+//        for (int c=0; c< number; c++){
+//            Frequency sampleFreq = freService.findByArtId(artId);
+//            String thisWord= sampleFreq.getWord();
+//            int thisFreq=sampleFreq.getFrequency();
+//            allWords.add(thisWord);
+//            allFreq.add(thisFreq);
+//        }
+//
+//        return "docu";
+//    }
+//    @GetMapping(value="/getExam")
+//    public String getExam(Model map){
+////        Ngram ngram =findbyAll();
+//        List <Article> arts = articleService.getAll();
+//        List <Ngram> ngram = ngramService.getAll();
+//        List <Frequency> freq = freService.getAll();
+//        List <Frequency> temp = new ArrayList<>();
+////        for (int j=0; j<freq.size(); j++) {
+////            for (int i = 0; i < freq.size(); i++) {
+////                temp = freService.findByFreqId(freq.get(i).getNgramId());
+////                System.out.println(temp);
+////
+////            }
+////        }
+//////                Frequency sampleFreq= freService.findByNgramId(temp);
+////                System.out.println(freq.get(j).getFrequency());
+////            }
+//
+////        List<Ngram> ngramlist = ngramService.getAll();
+////        Ngram ngram = ngramService.getAll();
+////        Frequency freq = freService.getAll();
+////        List <Frequency> fre1 = freService.findByNgramIdandFreqId(ngram.getNgramId(), freq.getFreqId());
+//////        Collections.sort(ngramlist);
+//        map.addAttribute("freq",freq);
+//
+//        map.addAttribute("arts",arts);
+////        map.addAttribute("freq",freq);
+////        int col = wordlist.size();
+//
+//
+//        return "docu";
+//    }
+//
+////    public String error(){
+////        return "index";
+////    }
 
     @GetMapping(value="/getAllNgrams")
     public String getNgrams(HttpServletRequest request, Model map){
@@ -373,21 +465,17 @@ public class HomeController {
     }
 
 
-    @PostMapping("/cleanContent")
     public String cleanContent(String content) throws IOException {
 
-        System.out.println("done scrape");
-        Set<String> stopWords = new LinkedHashSet<String>();
-        List<String> ngrams = new ArrayList<String>();
-        Pattern r = Pattern.compile("[A-Z]+");
+        String regex = "[A-Z]+";
+        Pattern r = Pattern.compile(regex);
         int wc=0;
 
         String[] words =content.replaceAll("[^a-zA-Z ]", "").split("\\s+");
 
-
         ArrayList<String> wordsList = new ArrayList<String>();
-        ArrayList<String> ngramsss = new ArrayList<String>();
         ArrayList<String> stemList = new ArrayList<String>();
+        ArrayList<String> ngramsss = new ArrayList<String>();
         for (String word : words) {
             System.out.println(word);
             wordsList.add(word);
@@ -409,6 +497,7 @@ public class HomeController {
             }
         }
 
+
         for (String a:wordsList){
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(a);
@@ -416,6 +505,7 @@ public class HomeController {
             String steem=stemmer.getCurrent();
             stemList.add(steem);
         }
+
 
         System.out.println("DONE STEMMING");
 
@@ -455,6 +545,8 @@ public class HomeController {
         for (String key : unique) {
             Ngram sampleWords = ngramService.findByWords(key);
 
+//            int wordsid = sampleWords.getNgramId();
+//            System.out.println("wordsid:"+ wordsid);
             if (sampleWords != null) {
                 wc = sampleWords.getWordCount() + Collections.frequency(ngramsss, key);
                 sampleWords.setWordCount(wc);
@@ -477,7 +569,6 @@ public class HomeController {
         System.out.println("DONE NGRAM");
         return "index";
     }
-
 
     public static List<String> ngrams(int n, String str) {
         List<String> ngrams = new ArrayList<String>();

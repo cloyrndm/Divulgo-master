@@ -228,8 +228,8 @@ public class TfIdfController {
         List<Tfidf> tfidf1 = tfidfService.findAll();
         for(int i = 0; i<tf.size(); i++) {
 
-        if(tf.get(i).getStat()==null) {
-            Tfidf tfidf2 = tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency());
+            if(tf.get(i).getStat()==null) {
+                Tfidf tfidf2 = tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency());
 //            if(tfidf1.size()==0) {
 //                Tfidf tfidf = new Tfidf();
 //
@@ -247,40 +247,40 @@ public class TfIdfController {
 //                tf.get(i).setStat("1");
 //                tfService.save(tf.get(i));
 //            }
-            if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) == null || tfidf1.size()==0) {
-                System.out.println("1st");
-                Tfidf tfidf = new Tfidf();
+                if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) == null || tfidf1.size()==0) {
+                    System.out.println("1st");
+                    Tfidf tfidf = new Tfidf();
 
-                Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                System.out.println("wow"+tfidff);
-                tfidf.setNgramId(tf.get(i).getNgramId());
-                tfidf.setWord(tf.get(i).getWord());
-                tfidf.setAgency(tf.get(i).getAgency());
-                tfidf.setTfidfVal(tfidff);
-                tfidf.setFreqId(tf.get(i).getFreqId());
-                tfidf.setArtId(tf.get(i).getArtId());
-                tfidfService.save(tfidf);
+                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
+                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
+                    System.out.println("wow"+tfidff);
+                    tfidf.setNgramId(tf.get(i).getNgramId());
+                    tfidf.setWord(tf.get(i).getWord());
+                    tfidf.setAgency(tf.get(i).getAgency());
+                    tfidf.setTfidfVal(tfidff);
+                    tfidf.setFreqId(tf.get(i).getFreqId());
+                    tfidf.setArtId(tf.get(i).getArtId());
+                    tfidfService.save(tfidf);
 
-                tf.get(i).setStat("1");
-                tfService.save(tf.get(i));
-            } else if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) != null) {
-                System.out.println("2nd");
-                Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                System.out.println("wow"+tfidff);
-                tfidf2.setTfidfVal(tfidff + tfidf2.getTfidfVal());
-                tfidfService.save(tfidf2);
-                tf.get(i).setStat("1");
-                tfService.save(tf.get(i));
+                    tf.get(i).setStat("1");
+                    tfService.save(tf.get(i));
+                } else if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) != null) {
+                    System.out.println("2nd");
+                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
+                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
+                    System.out.println("wow"+tfidff);
+                    tfidf2.setTfidfVal(tfidff + tfidf2.getTfidfVal());
+                    tfidfService.save(tfidf2);
+                    tf.get(i).setStat("1");
+                    tfService.save(tf.get(i));
+                }
             }
-        }
 
         }
 
         System.out.println("welp done");
     }
-//    @RequestMapping("/tfidf")
+    //    @RequestMapping("/tfidf")
     @RequestMapping("/tfidf")
     public String gotoTfidf(HttpSession session, Model model, ModelMap map, Tfidf tfidf) {
 
@@ -294,5 +294,5 @@ public class TfIdfController {
         model.addAttribute("tfidf",tfidf3);
 
         return "index";
-}
+    }
 }

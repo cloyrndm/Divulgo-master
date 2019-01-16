@@ -49,6 +49,7 @@ public class TfIdfController {
             frid.add(frequencyService.findAll().get(i).getFreqId());
             nid.add(frequencyService.findAll().get(i).getNgramId());
         }
+
         System.out.println("asd"+artid.size());
 
         Map<Integer, String> artIdContent = new HashMap<>();
@@ -90,15 +91,19 @@ public class TfIdfController {
         for (int i = 0; i<freq.size(); i++) {
             Article article1 = articleService.findByArtId(artid.get(i));
             Frequency fre1 = frequencyService.findByArtIdAndFreqId(artid.get(i),frid.get(i));
+            Ngram ngram = ngramService.findByNgramId(fre1.getNgramId());
+
             Tf tf5 = tfService.findByFreqId(frid.get(i));
 
             Double freqq = Double.valueOf(fre1.getFrequency());
             Double arts = Double.valueOf(article1.getArtSize());
+
             if(tf1.size()==0){
                 Tf tf = new Tf();
                 tf.setNgramId(fre1.getNgramId());
                 tf.setAgency(article1.getAgency());
-                tf.setWord(fre1.getWord());
+//                tf.setWord(fre1.getWord());
+                tf.setWord(ngram.getWords());
                 tf.setFreqId(fre1.getFreqId());
                 tf.setArtId(fre1.getArtId());
                 tf.setTfVal(freqq / arts);
@@ -108,7 +113,8 @@ public class TfIdfController {
             else if(tfService.findByFreqId(frid.get(i))!=null){
                 tf5.setNgramId(fre1.getNgramId());
                 tf5.setAgency(article1.getAgency());
-                tf5.setWord(fre1.getWord());
+//                tf5.setWord(fre1.getWord());
+                tf5.setWord(ngram.getWords());
                 tf5.setFreqId(fre1.getFreqId());
                 tf5.setArtId(fre1.getArtId());
                 tf5.setTfVal(freqq / arts);
@@ -119,7 +125,8 @@ public class TfIdfController {
                 Tf tf = new Tf();
                 tf.setNgramId(fre1.getNgramId());
                 tf.setAgency(article1.getAgency());
-                tf.setWord(fre1.getWord());
+                //tf.setWord(fre1.getWord());
+                tf.setWord(ngram.getWords());
                 tf.setFreqId(fre1.getFreqId());
                 tf.setArtId(fre1.getArtId());
                 tf.setTfVal(freqq / arts);
@@ -128,7 +135,6 @@ public class TfIdfController {
             }
         }
         System.out.println("DONE TF");
-
     }
 
     public void clean(){
@@ -188,7 +194,6 @@ public class TfIdfController {
                 idf1.setFreqId(freq.get(i).getFreqId());
                 idf1.setArtId(freq.get(i).getArtId());
                 idfService.save(idf1);
-
             }
             else if(idfService.findByFreqId(freq.get(i).getFreqId())!=(null)) {
                 System.out.println(2);
@@ -213,7 +218,6 @@ public class TfIdfController {
                 idfService.save(idf1);
 //                System.out.println("done idf");
             }
-
         }
         System.out.println("done idf");
     }
@@ -282,7 +286,7 @@ public class TfIdfController {
     }
     //    @RequestMapping("/tfidf")
     @RequestMapping("/tfidf")
-    public String gotoTfidf(HttpSession session, Model model, ModelMap map, Tfidf tfidf) {
+    public String gotoTfidf(HttpSession session, Model model,        ModelMap map, Tfidf tfidf) {
 
         TermFrequency();
         InverseTermFrequency();

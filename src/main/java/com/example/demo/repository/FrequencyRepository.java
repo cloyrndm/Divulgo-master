@@ -18,6 +18,7 @@ public interface FrequencyRepository extends JpaRepository<Frequency, Integer> {
     List<Frequency> findAll();
     Frequency findByNgramId(int ngramId);
     Frequency findByArtIdAndFreqId(int ai, int fi);
+    Frequency findByFreqId(int freqId);
 
 //    Frequency findByNgramIdandFreqId(int ngramId,int freqId);
 }

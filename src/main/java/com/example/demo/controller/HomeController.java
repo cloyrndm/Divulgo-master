@@ -464,6 +464,24 @@ public class HomeController {
         return "singleNgram";
     }
 
+//    @PostMapping("/stopwords")
+//    public String stop () throws IOException {
+//
+//        File file = new File("C:\\Users\\Cloie Andrea\\IdeaProjects\\Divulgo-master\\stopwords.txt");
+//        Set<String> stopWords = new LinkedHashSet<String>();
+//        BufferedReader br = new BufferedReader(new FileReader(file));
+//
+//        for(String line;(line = br.readLine()) != null;)
+//            stopWords.add(line.trim());
+//        br.close();
+//
+//        for (String a: stopWords){
+//            Stopwords stop = new Stopwords();
+//            stop.setStopwords(a);
+//            stopwordsService.save(stop);
+//        }
+//        return "index";
+//    }
 
     public String cleanContent(String content) throws IOException {
 
@@ -513,7 +531,7 @@ public class HomeController {
         int articleid = sampleContent.getArtId();
 
         String str = String.join(" ", stemList);
-        for (int n = 1; n <= 3; n++) {
+        for (int n = 1; n <=3; n++) {
             for (String ngram : ngrams(n, str)){
                 ngramsss.add(ngram);
                 System.out.println(ngram);

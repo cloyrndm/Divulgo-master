@@ -20,9 +20,18 @@ public class Tf {
     private String word;
     private Double tfVal;
     private String stat;
+//    private Integer len;
 
     //addd
 
+
+//    public Integer getLen() {
+//        return len;
+//    }
+//
+//    public void setLen(Integer len) {
+//        this.len = len;
+//    }
 
     public String getStat() {
         return stat;

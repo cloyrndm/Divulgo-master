@@ -20,6 +20,7 @@ public class Tfidf {
     private Double tfidfVal;
     private Integer freqId;
 
+
     //addd
     private Integer artId;
 

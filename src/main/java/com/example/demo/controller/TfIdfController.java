@@ -99,6 +99,7 @@ public class TfIdfController {
             Double arts = Double.valueOf(article1.getArtSize());
 
             if(tf1.size()==0){
+//                if(ngram.getWords().split("\\s+").length==1) {
                 Tf tf = new Tf();
                 tf.setNgramId(fre1.getNgramId());
                 tf.setAgency(article1.getAgency());
@@ -107,31 +108,53 @@ public class TfIdfController {
                 tf.setFreqId(fre1.getFreqId());
                 tf.setArtId(fre1.getArtId());
                 tf.setTfVal(freqq / arts);
+//                tf.setLen(1);
                 tfService.save(tf);
-//               System.out.println("done tf");
+//            }
+//                else if(ngram.getWords().split("\\s+").length==2) {
+//                    Tf tf = new Tf();
+//                    tf.setNgramId(fre1.getNgramId());
+//                    tf.setAgency(article1.getAgency());
+////                  tf.setWord(fre1.getWord());
+//                    tf.setWord(ngram.getWords());
+//                    tf.setFreqId(fre1.getFreqId());
+//                    tf.setArtId(fre1.getArtId());
+//                    tf.setTfVal(freqq / arts);
+////                    tf.setLen(2);
+//                    tfService.save(tf);
+//                }
+//                else if(ngram.getWords().split("\\s+").length==3){
+//                    Tf tf = new Tf();
+//                    tf.setNgramId(fre1.getNgramId());
+//                    tf.setAgency(article1.getAgency());
+////                  tf.setWord(fre1.getWord());
+//                    tf.setWord(ngram.getWords());
+//                    tf.setFreqId(fre1.getFreqId());
+//                    tf.setArtId(fre1.getArtId());
+//                    tf.setTfVal(freqq / arts);
+////                    tf.setLen(3);
+//                    tfService.save(tf);
+//                }
             }
             else if(tfService.findByFreqId(frid.get(i))!=null){
-                tf5.setNgramId(fre1.getNgramId());
-                tf5.setAgency(article1.getAgency());
-//                tf5.setWord(fre1.getWord());
-                tf5.setWord(ngram.getWords());
-                tf5.setFreqId(fre1.getFreqId());
-                tf5.setArtId(fre1.getArtId());
-                tf5.setTfVal(freqq / arts);
-                tfService.save(tf1.get(i));
-//               System.out.println("done tf");
+//                if(ngram.getWords().split("\\s+").length==1) {
+                    tf5.setNgramId(fre1.getNgramId());
+                    tf5.setAgency(article1.getAgency());
+                    tf5.setWord(ngram.getWords());
+                    tf5.setFreqId(fre1.getFreqId());
+                    tf5.setArtId(fre1.getArtId());
+                    tf5.setTfVal(freqq / arts);
+                    tfService.save(tf1.get(i));
             }
             else if(tfService.findByFreqId(frid.get(i))==null){
-                Tf tf = new Tf();
-                tf.setNgramId(fre1.getNgramId());
-                tf.setAgency(article1.getAgency());
-                //tf.setWord(fre1.getWord());
-                tf.setWord(ngram.getWords());
-                tf.setFreqId(fre1.getFreqId());
-                tf.setArtId(fre1.getArtId());
-                tf.setTfVal(freqq / arts);
-                tfService.save(tf);
-//               System.out.println("done tf");
+                    Tf tf = new Tf();
+                    tf.setNgramId(fre1.getNgramId());
+                    tf.setAgency(article1.getAgency());
+                    tf.setWord(ngram.getWords());
+                    tf.setFreqId(fre1.getFreqId());
+                    tf.setArtId(fre1.getArtId());
+                    tf.setTfVal(freqq / arts);
+                    tfService.save(tf);
             }
         }
         System.out.println("DONE TF");
@@ -159,7 +182,6 @@ public class TfIdfController {
 //        }
         for(int i = 0; i<freq.size();i++){
             Ngram ngram = ngramService.findByNgramId(freq.get(i).getNgramId());
-//            List<Frequency> frequency1 = frequencyService.findAll();
             if(ngram.getNgramId().equals(freq.get(i).getNgramId())&&ngram.getIdfWcount()==null) {
                 ngram.setIdfWcount(1);
                 ngramService.save(ngram);
@@ -222,7 +244,7 @@ public class TfIdfController {
         System.out.println("done idf");
     }
 
-    @RequestMapping("/watt")
+//    @RequestMapping("/tfidfs")
     public void TermFrequencyAndInverseTermFrequency(){
 
         List<Tf> tf = tfService.findAll();
@@ -232,61 +254,64 @@ public class TfIdfController {
         List<Tfidf> tfidf1 = tfidfService.findAll();
         for(int i = 0; i<tf.size(); i++) {
 
-        if(tf.get(i).getStat()==null) {
-            Tfidf tfidf2 = tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency());
-//            if(tfidf1.size()==0) {
-//                Tfidf tfidf = new Tfidf();
-//
-//                Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-//                Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-//                System.out.println("wow"+tfidff);
-//                tfidf.setNgramId(tf.get(i).getNgramId());
-//                tfidf.setWord(tf.get(i).getWord());
-//                tfidf.setAgency(tf.get(i).getAgency());
-//                tfidf.setTfidfVal(tfidff);
-//                tfidf.setFreqId(tf.get(i).getFreqId());
-//                tfidf.setArtId(tf.get(i).getArtId());
-//                tfidfService.save(tfidf);
-//
-//                tf.get(i).setStat("1");
-//                tfService.save(tf.get(i));
-//            }
-            if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) == null || tfidf1.size()==0) {
-                System.out.println("1st");
-                Tfidf tfidf = new Tfidf();
+            if (tf.get(i).getStat() == null) {
+                Tfidf tfidf2 = tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId());
+                if (tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId()) == null || tfidf1.size() == 0) {
+                    System.out.println("this is new");
+                    Tfidf tfidf = new Tfidf();
 
-                Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                System.out.println("wow"+tfidff);
-                tfidf.setNgramId(tf.get(i).getNgramId());
-                tfidf.setWord(tf.get(i).getWord());
-                tfidf.setAgency(tf.get(i).getAgency());
-                tfidf.setTfidfVal(tfidff);
-                tfidf.setFreqId(tf.get(i).getFreqId());
-                tfidf.setArtId(tf.get(i).getArtId());
-                tfidfService.save(tfidf);
+                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
+                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
+                    System.out.println("wow" + tfidff);
+                    tfidf.setNgramId(tf.get(i).getNgramId());
+                    tfidf.setWord(tf.get(i).getWord());
+                    tfidf.setAgency(tf.get(i).getAgency());
+                    tfidf.setTfidfVal(tfidff);
+                    tfidf.setFreqId(tf.get(i).getFreqId());
+                    tfidf.setArtId(tf.get(i).getArtId());
+                    tfidfService.save(tfidf);
 
-                tf.get(i).setStat("1");
-                tfService.save(tf.get(i));
-            } else if (tfidfService.findByWordAndAgency(tf.get(i).getWord(), tf.get(i).getAgency()) != null) {
-                System.out.println("2nd");
-                Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                System.out.println("wow"+tfidff);
-                tfidf2.setTfidfVal(tfidff + tfidf2.getTfidfVal());
-                tfidfService.save(tfidf2);
-                tf.get(i).setStat("1");
-                tfService.save(tf.get(i));
+                    tf.get(i).setStat("1");
+                    tfService.save(tf.get(i));
+                } else if (tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId()) != null) {
+//                    if(){
+                    System.out.println("not new");
+                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
+                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
+                    System.out.println("wow" + tfidff);
+                    tfidf2.setTfidfVal(tfidff + tfidf2.getTfidfVal());
+                    tfidfService.save(tfidf2);
+                    tf.get(i).setStat("1");
+                    tfService.save(tf.get(i));
+//                    }
+                } else
+                {
+                        System.out.println("add");
+                        Tfidf tfidf = new Tfidf();
+
+                        Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
+                        Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
+                        System.out.println("wow" + tfidff);
+                        tfidf.setNgramId(tf.get(i).getNgramId());
+                        tfidf.setWord(tf.get(i).getWord());
+                        tfidf.setAgency(tf.get(i).getAgency());
+                        tfidf.setTfidfVal(tfidff);
+                        tfidf.setFreqId(tf.get(i).getFreqId());
+                        tfidf.setArtId(tf.get(i).getArtId());
+                        tfidfService.save(tfidf);
+
+                        tf.get(i).setStat("1");
+                        tfService.save(tf.get(i));
+                    }
+
+                }
             }
-        }
-
-        }
 
         System.out.println("welp done");
-    }
-//    @RequestMapping("/tfidf")
+        }
+
     @RequestMapping("/tfidf")
-    public String gotoTfidf(HttpSession session, Model model,        ModelMap map, Tfidf tfidf) {
+    public String gotoTfidf(HttpSession session, Model model,ModelMap map, Tfidf tfidf) {
 
         TermFrequency();
         InverseTermFrequency();
@@ -298,5 +323,14 @@ public class TfIdfController {
         model.addAttribute("tfidf",tfidf3);
 
         return "index";
-}
+    }
+
+    @RequestMapping("/tfidfss")
+    public String asdfadsfsd(HttpSession session, Model model,ModelMap map, Tfidf tfidf) {
+
+        TermFrequencyAndInverseTermFrequency();
+
+
+        return "index";
+    }
 }

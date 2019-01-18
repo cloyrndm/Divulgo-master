@@ -32,11 +32,18 @@ public class TfidfService {
         return tfidfRepository.findByFreqId(id);
     }
 
+    public Tfidf findByFreqIdAndNgramId(int id1, int id2){
+        return tfidfRepository.findByFreqIdAndNgramId(id1,id2);
+    }
+
     public Tfidf findByTfidfId(int id){
        return tfidfRepository.findByTfidfId(id);
     }
 
     public Tfidf findByWordAndAgency(String w, String a){
         return tfidfRepository.findByWordAndAgency(w,a);
+    }
+    public Tfidf findByNgramIdAndAgency(int id, String a){
+        return tfidfRepository.findByNgramIdAndAgency(id,a);
     }
 }

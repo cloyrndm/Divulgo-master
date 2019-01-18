@@ -17,7 +17,7 @@ public class Idf {
     private Integer ngramId;
     private Integer freqId;
     private Double idfVal;
-
+    private String word;
     //addd
     private Integer artId;
 
@@ -54,13 +54,13 @@ public class Idf {
         this.freqId = freqId;
     }
 
-//    public String getWord() {
-//        return word;
-//    }
-//
-//    public void setWord(String word) {
-//        this.word = word;
-//    }
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
 
     public Double getIdfVal() {
         return idfVal;

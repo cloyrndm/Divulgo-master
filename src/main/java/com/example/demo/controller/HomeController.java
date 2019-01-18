@@ -10,6 +10,8 @@ import org.apache.tomcat.jni.Error;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -243,16 +245,12 @@ public class HomeController {
         Pattern mb = Pattern.compile("mb");
         Pattern abs = Pattern.compile("abs-cbn");
         Pattern manila= Pattern.compile("manilatimes");
-        Pattern inquirer = Pattern.compile("inquirer");
-        Pattern gma = Pattern.compile("gmanetwork");
-        Pattern sun = Pattern.compile("sunstar");
+        Pattern inq= Pattern.compile("inquirer");
         Matcher m=mb.matcher( url );
         Matcher a=abs.matcher( url );
         Matcher t=manila.matcher( url );
-        Matcher i=inquirer.matcher( url );
-        Matcher g=gma.matcher( url );
-        Matcher s=sun.matcher( url );
-
+        Matcher i=inq.matcher( url );
+        String title, text;
         Article sampleUrl = articleService.findByUrl(url);
 
         if (sampleUrl != null) {
@@ -262,79 +260,86 @@ public class HomeController {
             if (a.find()) {
                 System.out.println("THIS IS ABS CBN");
                 Document document = Jsoup.connect(url).get();
-                String title = document.title();
-                String text = document.select("div.article-content").text();
+                title = document.title();
+                text = document.select("div.article-content").text();
                 System.out.println("title:" + title);
                 System.out.println("article" + text);
+//                article.setTitle(title);
+//                article.setAgency(agency);
+//                article.setUrl(url);
+//                article.setContent(text);
+//                articleService.save(article);
+//                cleanContent(text);
                 article.setTitle(title);
+                article.setContent(text);
                 article.setAgency(agency);
                 article.setUrl(url);
-                article.setContent(text);
                 articleService.save(article);
-//                    try {
                 cleanContent(text);
-//                        model.addAttribute("msg","successful web scraping");
-//                        return "index";
-//                    }
-//                    catch (Exception e){
-//                        model.addAttribute("msg","web scraping error");
-//                        return "index";
-//                    }
             } else if (t.find()) {
                 System.out.println("THIS IS MANILATIMES");
                 Document document = Jsoup.connect(url).get();
-                String title = document.title();
+                title = document.title();
                 System.out.println("title:" + title);
-
-                String text = document.select("div.article-wrap").text();
+                text = document.select("div.article-wrap").text();
 
                 System.out.println("article" + text);
+//                article.setTitle(title);
+//                article.setAgency(agency);
+//                article.setUrl(url);
+//                article.setContent(text);
+//                articleService.save(article);
+//                cleanContent(text);
                 article.setTitle(title);
+                article.setContent(text);
                 article.setAgency(agency);
                 article.setUrl(url);
-                article.setContent(text);
                 articleService.save(article);
-//                    try {
                 cleanContent(text);
-//                        model.addAttribute("msg","successful web scraping");
-//                        return "index";
-//                    }
-//                    catch (Exception e){
-//                        model.addAttribute("msg","web scraping error");
-//                        return "index";
-//                    }
             } else if (m.find()) {
                 System.out.println("THIS IS MANILA BULLETIN");
                 Document document = Jsoup.connect(url).get();
-                String title = document.title();
+                title = document.title();
                 System.out.println("title:" + title);
-
-                String text = document.select("article.uk-article").text();
+                text = document.select("article.uk-article").text();
 
                 System.out.println("article" + text);
                 article.setTitle(title);
+                article.setContent(text);
                 article.setAgency(agency);
                 article.setUrl(url);
-                article.setContent(text);
                 articleService.save(article);
-//                    try {
                 cleanContent(text);
-//                        model.addAttribute("msg","successful web scraping");
-//                        return "index";
-//                    }
-//                    catch (Exception e){
-//                        model.addAttribute("msg","web scraping error");
-//                        return "index";
-//                    }
-            }
 
+            } else if (i.find()) {
+                System.out.println("THIS IS INQUIRER");
+                ArrayList<String> content = new ArrayList<String>();
+                Document document = Jsoup.connect(url).get();
+                title = document.title();
+                System.out.println("title:" + title);
+                Elements elements = document.select("p");
+                for (Element e : elements) {
+                    content.add(e.text());
+                }
+                text = String.join(" ", content);
+                article.setTitle(title);
+                article.setContent(text);
+                article.setAgency(agency);
+                article.setUrl(url);
+                articleService.save(article);
+                cleanContent(text);
+            }
         }
+
+
+
 
 
         return "index";
     }
     @PostMapping("/postFile")
     public String postFile(){
+
         return "index";
     }
 
@@ -449,9 +454,6 @@ public class HomeController {
         HashMap<String, Integer> nbysingle = new HashMap<>();
         System.out.println(id1);
         List<Frequency> frequency = freService.getAll();
-//        ArrayList<String> k = new
-
-
         for (int i = 0; i < frequency.size(); i++) {
             System.out.println(frequency.get(i).getArtId());
             if (id1.equals(frequency.get(i).getArtId())) {

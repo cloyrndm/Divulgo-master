@@ -30,293 +30,129 @@ public class TfIdfController {
     @Autowired
     TfidfService tfidfService;
 
-    @Autowired
-    TfService tfService;
 
-    @Autowired
-    IdfService idfService;
-
-
-    public void TermFrequency(){
+    public void TermFrequency() {
 
         List<Frequency> freq = frequencyService.findAll();
-        List<Integer> artid = new ArrayList<Integer>();
-        List<Integer> frid = new ArrayList<Integer>();
-        List<Integer> nid = new ArrayList<>();
-
         for (int i = 0; i < freq.size(); i++) {
-            artid.add(frequencyService.findAll().get(i).getArtId());
-            frid.add(frequencyService.findAll().get(i).getFreqId());
-            nid.add(frequencyService.findAll().get(i).getNgramId());
-        }
-
-        System.out.println("asd"+artid.size());
-
-        Map<Integer, String> artIdContent = new HashMap<>();
-        List<Article> article = articleService.findAll();
-        for (int i = 0; i < article.size(); i++) {
-            artIdContent.put(articleService.findAll().get(i).getArtId(),articleService.findAll().get(i).getContent());
-        }
-//      for checking purposes only
-        System.out.println("-----------------------------");
-        for (Map.Entry<Integer, String> artic : artIdContent.entrySet()) {
-            System.out.println(artic.getKey()+artic.getValue());
-        }
-
-        Map<Integer, Integer> artIdAndArtSize = new HashMap<>();
-        for (Map.Entry<Integer, String> artic : artIdContent.entrySet()) {
-            StringTokenizer st = new StringTokenizer(String.valueOf(artic.getValue()));
-            Integer count = st.countTokens();
-            artIdAndArtSize.put(artic.getKey(),count);
-
-        }
-        //checking purposes only
-
-        System.out.println("---------Article id and Count---------");
-        for (Map.Entry<Integer, Integer> artic : artIdAndArtSize.entrySet()) {
-            System.out.println(artic.getKey() + "\t\t" + artic.getValue());
-            Article article1 = articleService.findByArtId(artic.getKey());
-            article1.setArtSize(artic.getValue());
-            articleService.save(article1);
-        }
-
-        System.out.println("---------------------------------------");
-        //checking purposes only
-        Map<Integer, Double> tfval =  new HashMap<>();
-
-        System.out.println("freq"+freq.size());
-
-        List<Tf> tf1 = tfService.findAll();
-
-        for (int i = 0; i<freq.size(); i++) {
-            Article article1 = articleService.findByArtId(artid.get(i));
-            Frequency fre1 = frequencyService.findByArtIdAndFreqId(artid.get(i),frid.get(i));
-            Ngram ngram = ngramService.findByNgramId(fre1.getNgramId());
-
-            Tf tf5 = tfService.findByFreqId(frid.get(i));
-
-            Double freqq = Double.valueOf(fre1.getFrequency());
-            Double arts = Double.valueOf(article1.getArtSize());
-
-            if(tf1.size()==0){
-//                if(ngram.getWords().split("\\s+").length==1) {
-                Tf tf = new Tf();
-                tf.setNgramId(fre1.getNgramId());
-                tf.setAgency(article1.getAgency());
-//                tf.setWord(fre1.getWord());
-                tf.setWord(ngram.getWords());
-                tf.setFreqId(fre1.getFreqId());
-                tf.setArtId(fre1.getArtId());
-                tf.setTfVal(freqq / arts);
-//                tf.setLen(1);
-                tfService.save(tf);
-//            }
-//                else if(ngram.getWords().split("\\s+").length==2) {
-//                    Tf tf = new Tf();
-//                    tf.setNgramId(fre1.getNgramId());
-//                    tf.setAgency(article1.getAgency());
-////                  tf.setWord(fre1.getWord());
-//                    tf.setWord(ngram.getWords());
-//                    tf.setFreqId(fre1.getFreqId());
-//                    tf.setArtId(fre1.getArtId());
-//                    tf.setTfVal(freqq / arts);
-////                    tf.setLen(2);
-//                    tfService.save(tf);
-//                }
-//                else if(ngram.getWords().split("\\s+").length==3){
-//                    Tf tf = new Tf();
-//                    tf.setNgramId(fre1.getNgramId());
-//                    tf.setAgency(article1.getAgency());
-////                  tf.setWord(fre1.getWord());
-//                    tf.setWord(ngram.getWords());
-//                    tf.setFreqId(fre1.getFreqId());
-//                    tf.setArtId(fre1.getArtId());
-//                    tf.setTfVal(freqq / arts);
-////                    tf.setLen(3);
-//                    tfService.save(tf);
-//                }
-            }
-            else if(tfService.findByFreqId(frid.get(i))!=null){
-//                if(ngram.getWords().split("\\s+").length==1) {
-                    tf5.setNgramId(fre1.getNgramId());
-                    tf5.setAgency(article1.getAgency());
-                    tf5.setWord(ngram.getWords());
-                    tf5.setFreqId(fre1.getFreqId());
-                    tf5.setArtId(fre1.getArtId());
-                    tf5.setTfVal(freqq / arts);
-                    tfService.save(tf1.get(i));
-            }
-            else if(tfService.findByFreqId(frid.get(i))==null){
-                    Tf tf = new Tf();
-                    tf.setNgramId(fre1.getNgramId());
-                    tf.setAgency(article1.getAgency());
-                    tf.setWord(ngram.getWords());
-                    tf.setFreqId(fre1.getFreqId());
-                    tf.setArtId(fre1.getArtId());
-                    tf.setTfVal(freqq / arts);
-                    tfService.save(tf);
-            }
-        }
-        System.out.println("DONE TF");
-    }
-
-    public void clean(){
-        List<Ngram> ngram = ngramService.findAll();
-        for (int i = 0; i < ngram.size(); i++) {
-            ngram.get(i).setIdfWcount(null);
-            ngramService.save(ngram.get(i));
-        }
-    }
-    @RequestMapping(value="/wat")
-    public void InverseTermFrequency() {
-        List<Frequency> freq = frequencyService.findAll();
-
-//        ArrayList<Integer> ngramid = new ArrayList<Integer>();
-//        ArrayList<Integer> aid = new ArrayList<Integer>();
-//        ArrayList<Integer> freqqq = new ArrayList<>();
-
-//        for (int i = 0; i < freq.size(); i++) {
-//            ngramid.add(frequencyService.findAll().get(i).getNgramId());
-//            aid.add(frequencyService.findAll().get(i).getArtId());
-//            freqqq.add(frequencyService.findAll().get(i).getFreqId());
-//        }
-        for(int i = 0; i<freq.size();i++){
-            Ngram ngram = ngramService.findByNgramId(freq.get(i).getNgramId());
-            if(ngram.getNgramId().equals(freq.get(i).getNgramId())&&ngram.getIdfWcount()==null) {
-                ngram.setIdfWcount(1);
-                ngramService.save(ngram);
-            }
-            else if(ngram.getNgramId().equals(freq.get(i).getNgramId())&&ngram.getIdfWcount()!=null){
-                ngram.setIdfWcount(ngram.getIdfWcount()+1);
-                ngramService.save(ngram);
-            }
-
-        }
-
-        //TF-IDF
-        List<Article> a = articleService.findAll();
-        int size = a.size();
-        System.out.println("size: "+size);
-
-        List<Idf> idf5 = idfService.findAll();
-        for(int i = 0; i<freq.size(); i++){
-
-            Idf idf2 = idfService.findByFreqId(freq.get(i).getFreqId());
-            Ngram ngram = ngramService.findByNgramId(freq.get(i).getNgramId());
-
-            if(idf5.size()==0){
-                System.out.println(1);
-                Idf idf1 = new Idf();
-                Double d = (size / Double.valueOf(ngram.getIdfWcount()))+1;
-                System.out.println(d);
-                Double idff = Math.log(d);
-                System.out.println(idff);
-                idf1.setIdfVal(idff);
-                idf1.setNgramId(ngram.getNgramId());
-                idf1.setFreqId(freq.get(i).getFreqId());
-                idf1.setArtId(freq.get(i).getArtId());
-                idfService.save(idf1);
-            }
-            else if(idfService.findByFreqId(freq.get(i).getFreqId())!=(null)) {
-                System.out.println(2);
-                Double d = size / Double.valueOf(ngram.getIdfWcount());
-                Double idff = Math.log(d);
-                idf2.setIdfVal(idff);
-                idf2.setNgramId(ngram.getNgramId());
-                idf2.setFreqId(freq.get(i).getFreqId());
-                idf2.setArtId(freq.get(i).getArtId());
-                idfService.save(idf2);
-//                System.out.println("done idf");
-            }
-            else if(idfService.findByFreqId(freq.get(i).getFreqId())==(null)){
-                System.out.println(3);
-                Idf idf1 = new Idf();
-                Double d = size / Double.valueOf(ngram.getIdfWcount())+1;
-                Double idff = Math.log(d);
-                idf1.setIdfVal(idff);
-                idf1.setNgramId(ngram.getNgramId());
-                idf1.setFreqId(freq.get(i).getFreqId());
-                idf1.setArtId(freq.get(i).getArtId());
-                idfService.save(idf1);
-//                System.out.println("done idf");
-            }
-        }
-        System.out.println("done idf");
-    }
-
-//    @RequestMapping("/tfidfs")
-    public void TermFrequencyAndInverseTermFrequency(){
-
-        List<Tf> tf = tfService.findAll();
-        System.out.println("size tf"+tf.size());
-        List<Idf> idf = idfService.findAll();
-        System.out.println("size idf"+idf.size());
-        List<Tfidf> tfidf1 = tfidfService.findAll();
-        for(int i = 0; i<tf.size(); i++) {
-
-            if (tf.get(i).getStat() == null) {
-                Tfidf tfidf2 = tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId());
-                if (tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId()) == null || tfidf1.size() == 0) {
-                    System.out.println("this is new");
-                    Tfidf tfidf = new Tfidf();
-
-                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                    System.out.println("wow" + tfidff);
-                    tfidf.setNgramId(tf.get(i).getNgramId());
-                    tfidf.setWord(tf.get(i).getWord());
-                    tfidf.setAgency(tf.get(i).getAgency());
-                    tfidf.setTfidfVal(tfidff);
-                    tfidf.setFreqId(tf.get(i).getFreqId());
-                    tfidf.setArtId(tf.get(i).getArtId());
-                    tfidfService.save(tfidf);
-
-                    tf.get(i).setStat("1");
-                    tfService.save(tf.get(i));
-                } else if (tfidfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(),tf.get(i).getNgramId()) != null) {
-//                    if(){
-                    System.out.println("not new");
-                    Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                    Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                    System.out.println("wow" + tfidff);
-                    tfidf2.setTfidfVal(tfidff + tfidf2.getTfidfVal());
-                    tfidfService.save(tfidf2);
-                    tf.get(i).setStat("1");
-                    tfService.save(tf.get(i));
-//                    }
-                } else
-                {
-                        System.out.println("add");
-                        Tfidf tfidf = new Tfidf();
-
-                        Idf idf1 = idfService.findByFreqIdAndNgramId(tf.get(i).getFreqId(), tf.get(i).getNgramId());
-                        Double tfidff = idf1.getIdfVal() * tf.get(i).getTfVal();
-                        System.out.println("wow" + tfidff);
-                        tfidf.setNgramId(tf.get(i).getNgramId());
-                        tfidf.setWord(tf.get(i).getWord());
-                        tfidf.setAgency(tf.get(i).getAgency());
-                        tfidf.setTfidfVal(tfidff);
-                        tfidf.setFreqId(tf.get(i).getFreqId());
-                        tfidf.setArtId(tf.get(i).getArtId());
-                        tfidfService.save(tfidf);
-
-                        tf.get(i).setStat("1");
-                        tfService.save(tf.get(i));
+                if (freq.get(i).getStat() == null) {
+                Article article = articleService.findByArtId(freq.get(i).getArtId());
+                Ngram ngram1 = ngramService.findByNgramId(freq.get(i).getNgramId());
+                Double freqq = Double.valueOf(freq.get(i).getFrequency());
+                System.out.println(freq.get(i).getFreqId()+" "+freq.get(i).getNgramId());
+                if (tfidfService.findByNgramIdAndAgency(freq.get(i).getNgramId(), article.getAgency()) == null) {
+                        Tfidf tfidf1 = new Tfidf();
+                        tfidf1.setNgramId(freq.get(i).getNgramId());
+                        tfidf1.setAgency(article.getAgency());
+                        tfidf1.setWord(ngram1.getWords());
+                        tfidf1.setFreqId(freq.get(i).getFreqId());
+                        tfidf1.setArtId(freq.get(i).getArtId());
+                        tfidf1.setStat(1);
+                        Double w = freqq / article.getArtSize();
+                        tfidf1.setTfVal(freqq / article.getArtSize());
+                        tfidfService.save(tfidf1);
+                }
+                  else {
+                        Tfidf tfidf2 = tfidfService.findByNgramIdAndAgency(freq.get(i).getNgramId(), article.getAgency());
+                        Double tfNewVal = freqq / article.getArtSize();
+                        Double tfUpdatedVal = tfidf2.getTfVal() + tfNewVal;
+                        tfidf2.setTfVal(tfUpdatedVal);
+                        tfidf2.setStat(1);
+                        tfidfService.save(tfidf2);
                     }
+                }
 
+            }
+        }
+
+
+    public void wordcount(){
+        List<Frequency> freq = frequencyService.findAll();
+        for(int i = 0; i<freq.size();i++){
+            if(freq.get(i).getStat()==null) {
+                Ngram ngram = ngramService.findByNgramId(freq.get(i).getNgramId());
+                if (ngram.getNgramId().equals(freq.get(i).getNgramId()) && ngram.getIdfWcount() == null) {
+                    ngram.setIdfWcount(1);
+                    ngramService.save(ngram);
+
+                    freq.get(i).setStat("1");
+                    frequencyService.save(freq.get(i));
+                } else if (ngram.getNgramId().equals(freq.get(i).getNgramId()) && ngram.getIdfWcount() != null) {
+                    ngram.setIdfWcount(ngram.getIdfWcount() + 1);
+                    ngramService.save(ngram);
+
+                    freq.get(i).setStat("1");
+                    frequencyService.save(freq.get(i));
                 }
             }
+        }
+    }
 
-        System.out.println("welp done");
+    public void InverseTermFrequency() {
+        List<Article> a = articleService.findAll();
+        int size = a.size();
+
+        List<Tfidf> tfidf = tfidfService.findAll();
+        for(int i = 0; i<tfidf.size(); i++){
+
+            if(tfidf.get(i).getIdfVal()==null && tfidf.get(i).getStat()==null) {
+                    Ngram ngram = ngramService.findByNgramId(tfidf.get(i).getNgramId());
+                    Double d = (size / Double.valueOf(ngram.getIdfWcount()))+1;
+                    Double idff = Math.log(d);
+                    tfidf.get(i).setIdfVal(idff);
+                    tfidfService.save(tfidf.get(i));
+            }
+            else if(tfidf.get(i).getStat()!=null && tfidf.get(i).getIdfVal()==null) {
+                Ngram ngram = ngramService.findByNgramId(tfidf.get(i).getNgramId());
+                Double d = (size / Double.valueOf(ngram.getIdfWcount()))+1;
+                Double idff = Math.log(d);
+                tfidf.get(i).setIdfVal(idff);
+                tfidfService.save(tfidf.get(i));
+            }
+            else if(tfidf.get(i).getStat()!=null && tfidf.get(i).getIdfVal()!=null){
+                Ngram ngram = ngramService.findByNgramId(tfidf.get(i).getNgramId());
+                Double d = (size / Double.valueOf(ngram.getIdfWcount()))+1;
+                Double newIdff = Math.log(d);
+                Double updateIdf = tfidf.get(i).getIdfVal()+newIdff;
+                tfidf.get(i).setIdfVal(updateIdf);
+                tfidfService.save(tfidf.get(i));
+            }
+        }
+    }
+
+
+    public void TermFrequencyAndInverseTermFrequency(){
+
+        List<Tfidf> tfidf1 = tfidfService.findAll();
+        for(int i = 0; i<tfidf1.size(); i++) {
+            if(tfidf1.get(i).getStat()!=null) {
+                Tfidf tfidf2 = tfidfService.findByFreqId(tfidf1.get(i).getFreqId());
+                Double tfidf = tfidf2.getTfVal() * tfidf2.getIdfVal();
+                tfidf2.setTfidfVal(tfidf);
+                tfidf2.setStat(null);
+                tfidfService.save(tfidf2);
+            }
+        }
         }
 
     @RequestMapping("/tfidf")
     public String gotoTfidf(HttpSession session, Model model,ModelMap map, Tfidf tfidf) {
-
+        System.out.println("----------------------starting term frequency process------------------------");
+        System.out.println("saving...");
         TermFrequency();
+        System.out.println("------------------------end of term frequency process------------------------");
+        System.out.println("-------------------------start idf count-------------------------------------");
+        System.out.println("saving...");
+        wordcount();
+        System.out.println("-------------------------end count-------------------------------------------");
+        System.out.println("----------------------starting idf frequency process------------------------");
+        System.out.println("saving...");
         InverseTermFrequency();
-        clean();
+        System.out.println("----------------------end idf process---------------------------------------");
+        System.out.println("-------------------start tfidf process--------------------------------------");
+        System.out.println("saving...");
         TermFrequencyAndInverseTermFrequency();
+        System.out.println("---------------------------------------end----------------------------------");
 
         List<Tfidf> tfidf3 = tfidfService.findAll();
 
@@ -325,12 +161,4 @@ public class TfIdfController {
         return "index";
     }
 
-    @RequestMapping("/tfidfss")
-    public String asdfadsfsd(HttpSession session, Model model,ModelMap map, Tfidf tfidf) {
-
-        TermFrequencyAndInverseTermFrequency();
-
-
-        return "index";
-    }
 }

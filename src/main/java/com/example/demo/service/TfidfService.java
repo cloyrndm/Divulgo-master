@@ -32,6 +32,18 @@ public class TfidfService {
         return tfidfRepository.findByFreqId(id);
     }
 
+    public Tfidf findByFreqIdAndWord(int id, String a){
+        return tfidfRepository.findByFreqIdAndWord(id,a);
+    }
+
+    public Tfidf findByAgency(String a){
+        return tfidfRepository.findByAgency(a);
+    }
+
+//    public Tfidf findByFreqId(int id){
+//        return tfidfRepository.findByFreqId(id);
+//    }
+
     public Tfidf findByFreqIdAndNgramId(int id1, int id2){
         return tfidfRepository.findByFreqIdAndNgramId(id1,id2);
     }
@@ -40,10 +52,12 @@ public class TfidfService {
        return tfidfRepository.findByTfidfId(id);
     }
 
-    public Tfidf findByWordAndAgency(String w, String a){
-        return tfidfRepository.findByWordAndAgency(w,a);
-    }
+//    public Tfidf findByWordAndAgency(String w, String a){
+//        return tfidfRepository.findByWordAndAgency(w,a);
+//    }
     public Tfidf findByNgramIdAndAgency(int id, String a){
         return tfidfRepository.findByNgramIdAndAgency(id,a);
     }
+
+//    public Tfidf findByTfidfIdA
 }

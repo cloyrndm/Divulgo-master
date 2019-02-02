@@ -54,11 +54,6 @@ public class GovtUserController {
     @Autowired
     HomeController homeController;
 
-    @Autowired
-    TfService tfService;
-
-    @Autowired
-    IdfService idfService;
 
     @RequestMapping("/glogin")
     private String goHome(HttpSession session){
@@ -184,8 +179,9 @@ public class GovtUserController {
 
         homeController.cleanContent(complaint);
         tfIdfController.TermFrequency();
+        tfIdfController.wordcount();
         tfIdfController.InverseTermFrequency();
-        tfIdfController.clean();
+//        tfIdfController.clean();
         tfIdfController.TermFrequencyAndInverseTermFrequency();
 
             String type = (String) session.getAttribute("type");
@@ -247,8 +243,9 @@ public class GovtUserController {
 
         homeController.cleanContent(complaintt);
         tfIdfController.TermFrequency();
+        tfIdfController.wordcount();
         tfIdfController.InverseTermFrequency();
-        tfIdfController.clean();
+//        tfIdfController.clean();
         tfIdfController.TermFrequencyAndInverseTermFrequency();
 
 //      --------------------save to database---------------------

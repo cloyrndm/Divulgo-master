@@ -18,7 +18,7 @@ public interface NgramRepository extends JpaRepository<Ngram, Integer> {
 //
     Ngram findByWords(String words);
 
-    Ngram findByNgramId(Integer i);
+    Ngram findByNgramId(int i);
 
     List<Ngram> findAll();
 }

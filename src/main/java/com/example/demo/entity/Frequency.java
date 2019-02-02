@@ -20,10 +20,21 @@ public class Frequency {
     private Integer frequency;
     private String word;
 
+    private String stat;
+
 
     public Frequency (){
 
     }
+
+    public String getStat() {
+        return stat;
+    }
+
+    public void setStat(String stat) {
+        this.stat = stat;
+    }
+
     public Integer getFreqId() {
         return freqId;
     }

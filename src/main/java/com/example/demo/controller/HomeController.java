@@ -72,101 +72,101 @@ public class HomeController {
         return "test";
     }
 
-    @RequestMapping("/getResult")
-    public String result(HttpServletRequest request, Model model){
-        String test = request.getParameter("testcontent");
-//        Article article = articleService.findByContent(test);
-//        String rAgency = article.getAgency();
-//        System.out.println(rAgency);
-        String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
-        ArrayList<String> stemList = new ArrayList<>();
-
-        for (String a : words) {
-            PorterStemmer stemmer = new PorterStemmer();
-            stemmer.setCurrent(a);
-            stemmer.stem();
-            String steem = stemmer.getCurrent();
-            stemList.add(steem);
-            System.out.println(steem);
-
-        }
-        System.out.println(stemList.size());
-        List<Tfidf> tfidf6 = tfidfService.findAll();
-        Double love = 0.0;
-        Double lra = 0.0;
-        Double lto = 0.0;
-        Double sss = 0.0;
-        HashMap<String, Double> result = new HashMap<>();
-        HashMap<String, Double> entry = new HashMap<>();
-        for (int i = 0; i < tfidf6.size(); i++) {
-            Tfidf tfidf = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
-
-            if (stemList.contains(tfidf.getWord())) {
-                if (tfidf.getAgency().equals("LTO")) {
-                    lto = lto + tfidf.getTfidfVal();
-//                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-//                    System.out.println(tfidf.getWord() +" LTO value computation: " + lto + tfidf.getAgency());
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(lto);
-//                    System.out.println(tfidf.getAgency());          System.out.println(tfidf.getAgency());
-//                    System.out.println("---------------");
-
-                }
-                if (tfidf.getAgency().equals("LRA")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(lra);
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println("---------------");
-                }
-                if (tfidf.getAgency().equals("PAG-IBIG")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(love);
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println("---------------");
-                }
-                if (tfidf.getAgency().equals("SSS")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(sss);
-//                    System.out.println("---------------");
-                }
-
-            }
-            entry.put("LTO", lto);
-            entry.put("LRA", lra);
-            entry.put("PAG-IBIG", love);
-            entry.put("SSS", sss);
-        }
-        result = maxVal(entry);
-
-//        System.out.println("-----------RESULT-------------");
-//        for (Map.Entry<String, Double> e : result.entrySet()) {
-//            Test test1 = new Test();
-//            if(article.getAgency().equals(e.getKey())){
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("CORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","CORRECT");
-//            }
-//            else{
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("INCORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","INCORRECT");
-//            }
+//    @RequestMapping("/getResult")
+//    public String result(HttpServletRequest request, Model model){
+//        String test = request.getParameter("testcontent");
+////        Article article = articleService.findByContent(test);
+////        String rAgency = article.getAgency();
+////        System.out.println(rAgency);
+//        String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
+//        ArrayList<String> stemList = new ArrayList<>();
+//
+//        for (String a : words) {
+//            PorterStemmer stemmer = new PorterStemmer();
+//            stemmer.setCurrent(a);
+//            stemmer.stem();
+//            String steem = stemmer.getCurrent();
+//            stemList.add(steem);
+//            System.out.println(steem);
 //
 //        }
-        return "test";
-    }
+//        System.out.println(stemList.size());
+//        List<Tfidf> tfidf6 = tfidfService.findAll();
+//        Double love = 0.0;
+//        Double lra = 0.0;
+//        Double lto = 0.0;
+//        Double sss = 0.0;
+//        HashMap<String, Double> result = new HashMap<>();
+//        HashMap<String, Double> entry = new HashMap<>();
+//        for (int i = 0; i < tfidf6.size(); i++) {
+//            Tfidf tfidf = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
+//
+//            if (stemList.contains(tfidf.getWord())) {
+//                if (tfidf.getAgency().equals("LTO")) {
+//                    lto = lto + tfidf.getTfidfVal();
+////                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
+////                    System.out.println(tfidf.getWord() +" LTO value computation: " + lto + tfidf.getAgency());
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println(tfidf.getWord());
+//                    System.out.println(lto);
+////                    System.out.println(tfidf.getAgency());          System.out.println(tfidf.getAgency());
+////                    System.out.println("---------------");
+//
+//                }
+//                if (tfidf.getAgency().equals("LRA")) {
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println(tfidf.getWord());
+//                    System.out.println(lra);
+////                    System.out.println(tfidf.getAgency());
+////                    System.out.println("---------------");
+//                }
+//                if (tfidf.getAgency().equals("PAG-IBIG")) {
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println(tfidf.getWord());
+//                    System.out.println(love);
+////                    System.out.println(tfidf.getAgency());
+////                    System.out.println("---------------");
+//                }
+//                if (tfidf.getAgency().equals("SSS")) {
+//                    System.out.println(tfidf.getAgency());
+//                    System.out.println(tfidf.getWord());
+//                    System.out.println(sss);
+////                    System.out.println("---------------");
+//                }
+//
+//            }
+//            entry.put("LTO", lto);
+//            entry.put("LRA", lra);
+//            entry.put("PAG-IBIG", love);
+//            entry.put("SSS", sss);
+//        }
+//        result = maxVal(entry);
+//
+////        System.out.println("-----------RESULT-------------");
+////        for (Map.Entry<String, Double> e : result.entrySet()) {
+////            Test test1 = new Test();
+////            if(article.getAgency().equals(e.getKey())){
+////                test1.setArticleid(article.getArtId());
+////                test1.setActualAgency(article.getAgency());
+////                test1.setPredictedAgency(e.getKey());
+////                test1.setResultl("CORRECT");
+////                test1.setPhase("8");
+////                testService.save(test1);
+////                model.addAttribute("result","CORRECT");
+////            }
+////            else{
+////                test1.setArticleid(article.getArtId());
+////                test1.setActualAgency(article.getAgency());
+////                test1.setPredictedAgency(e.getKey());
+////                test1.setResultl("INCORRECT");
+////                test1.setPhase("8");
+////                testService.save(test1);
+////                model.addAttribute("result","INCORRECT");
+////            }
+////
+////        }
+//        return "test";
+//    }
 
     public HashMap<String, Double> maxVal(HashMap<String, Double> values){
         HashMap<String, Double> max = new HashMap<>();
@@ -228,9 +228,16 @@ public class HomeController {
         String content=request.getParameter("content");
         String agency=request.getParameter("agency");
         String url=request.getParameter("url");
+        System.out.println(content);
+
+
+//        articleService.save(article);
+//        arts = Double.valueOf(article.getArtSize());
+
         article.setTitle(title);
         article.setTitle(url);
         article.setAgency(agency);
+//        article.setArtSize(count);
         article.setContent(content);
         articleService.save(article);
         cleanContent(content);
@@ -252,6 +259,7 @@ public class HomeController {
         Matcher i=inq.matcher( url );
         String title, text;
         Article sampleUrl = articleService.findByUrl(url);
+        System.out.println("SADSADASDAS");
 
         if (sampleUrl != null) {
             return "error";
@@ -270,6 +278,9 @@ public class HomeController {
 //                article.setContent(text);
 //                articleService.save(article);
 //                cleanContent(text);
+                int count = new StringTokenizer(text).countTokens();
+                System.out.println(count);
+                article.setArtSize(count);
                 article.setTitle(title);
                 article.setContent(text);
                 article.setAgency(agency);
@@ -284,12 +295,9 @@ public class HomeController {
                 text = document.select("div.article-wrap").text();
 
                 System.out.println("article" + text);
-//                article.setTitle(title);
-//                article.setAgency(agency);
-//                article.setUrl(url);
-//                article.setContent(text);
-//                articleService.save(article);
-//                cleanContent(text);
+                int count = new StringTokenizer(text).countTokens();
+                System.out.println(count);
+                article.setArtSize(count);
                 article.setTitle(title);
                 article.setContent(text);
                 article.setAgency(agency);
@@ -304,6 +312,9 @@ public class HomeController {
                 text = document.select("article.uk-article").text();
 
                 System.out.println("article" + text);
+                int count = new StringTokenizer(text).countTokens();
+                System.out.println(count);
+                article.setArtSize(count);
                 article.setTitle(title);
                 article.setContent(text);
                 article.setAgency(agency);
@@ -322,6 +333,9 @@ public class HomeController {
                     content.add(e.text());
                 }
                 text = String.join(" ", content);
+                int count = new StringTokenizer(text).countTokens();
+                System.out.println(count);
+                article.setArtSize(count);
                 article.setTitle(title);
                 article.setContent(text);
                 article.setAgency(agency);

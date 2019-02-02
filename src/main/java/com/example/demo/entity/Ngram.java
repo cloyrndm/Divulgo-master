@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ngram")
-public class Ngram implements Comparable<Ngram> {
+public class Ngram {
     @Id
     @GeneratedValue
     private Integer ngramId;
@@ -61,13 +61,6 @@ public class Ngram implements Comparable<Ngram> {
         this.wordCount = wordCount;
     }
 
-    public Ngram (){
 
-    }
-
-    @Override
-    public int compareTo(Ngram ngram) {
-        return ngram.getWords().compareTo(ngram.getWords());
-    }
 }
 

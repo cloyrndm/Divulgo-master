@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 public class HomeController {
 
     @Autowired
-    UsersService usersService;
+    UserService userService;
 
     @Autowired
     ArticleService articleService;
@@ -226,26 +226,28 @@ public class HomeController {
 //    }
     //--------error bc deleted users entity
 
-<<<<<<< HEAD
+
     @PostMapping("/register")
     public String register(HttpServletRequest request){
         User users = new User();
+        String uType="admin";
         users.setUsername(request.getParameter("username"));
         users.setEmail(request.getParameter("email"));
         users.setPassword(request.getParameter("password"));
         users.setFirst_name(request.getParameter("firstname"));
         users.setLast_name(request.getParameter("lastname"));
-        usersService.saveUser(users);
+        users.setUserType(uType);
+        userService.save(users);
 
         return "login";
     }
     @RequestMapping("/goIndex")
     public String goIndex(HttpServletRequest request, HttpSession session, Model model) {
-        Users user= new Users();
+        User user= new User();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        Users sampleUser = usersService.findUserByUsername(username, password);
+        User sampleUser = userService.findByUsernameandPassword(username, password);
         if (sampleUser != null) {
             session.setAttribute("user",sampleUser);
             model.addAttribute("username", username);
@@ -261,8 +263,7 @@ public class HomeController {
             return "login";
         }
     }
-=======
->>>>>>> 02daefac0b8663511ef03bc4591475c444072573
+
     @PostMapping("/postText")
     public String text(HttpServletRequest request) throws IOException {
         Article article = new Article();

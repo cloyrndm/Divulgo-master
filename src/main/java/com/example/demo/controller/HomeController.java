@@ -58,6 +58,10 @@ public class HomeController {
     @Autowired
     StopwordsService stopwordsService;
 
+    @Autowired
+    SentimentService sentimentService;
+
+
     @RequestMapping("/registration")
     public String gotoRegistration(){
         return "register";
@@ -247,7 +251,7 @@ public class HomeController {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        User sampleUser = userService.findByUsernameandPassword(username, password);
+        User sampleUser = userService.findByUsername(username);
         if (sampleUser != null) {
             session.setAttribute("user",sampleUser);
             model.addAttribute("username", username);
@@ -266,18 +270,32 @@ public class HomeController {
 
     @PostMapping("/postText")
     public String text(HttpServletRequest request) throws IOException {
-        Article article = new Article();
-        String title=request.getParameter("title");
-        String content=request.getParameter("content");
-        String agency=request.getParameter("agency");
-        String url=request.getParameter("url");
-        System.out.println(content);
-        article.setTitle(title);
-        article.setTitle(url);
-        article.setAgency(agency);
-        article.setContent(content);
-        articleService.save(article);
-        cleanContent(content);
+//        Article article = new Article();
+//        String title=request.getParameter("title");
+//        String content=request.getParameter("content");
+//        String agency=request.getParameter("agency");
+//        String url=request.getParameter("url");
+//        System.out.println(content);
+//        article.setTitle(title);
+//        article.setUrl(url);
+//        article.setAgency(agency);
+//        article.setContent(content);
+//        articleService.save(article);
+//        cleanContent(content);
+        Sentiment sent = new Sentiment();
+        String sentiment= request.getParameter("sentiment");
+        String rating = request.getParameter("rating");
+        Integer rate = Integer.valueOf(rating);
+
+//        PorterStemmer stemmer = new PorterStemmer();
+//        stemmer.setCurrent(sentiment);
+//        stemmer.stem();
+//        String steem=stemmer.getCurrent();
+
+        sent.setSentiment(sentiment);
+        sent.setRating(rate);
+        sentimentService.save(sent);
+
         return "index";
     }
 

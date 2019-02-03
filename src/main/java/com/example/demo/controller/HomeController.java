@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 @Controller
 public class HomeController {
 
-    @Autowired
-    UsersService usersService;
+//    @Autowired
+//    UsersService usersService;
 
     @Autowired
     ArticleService articleService;
@@ -108,39 +108,45 @@ public class HomeController {
         Double sss = 0.0;
         HashMap<String, Double> result = new HashMap<>();
         HashMap<String, Double> entry = new HashMap<>();
-        for (int i = 0; i < tfidf6.size(); i++) {
-            Tfidf tfidf = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
 
-            if (ngramsss.contains(tfidf.getWord())) {
-                if (tfidf.getAgency().equals("LTO")) {
-                    lto = lto + tfidf.getTfidfVal();
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(lto);
-                }
-                if (tfidf.getAgency().equals("LRA")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(lra);
-                }
-                if (tfidf.getAgency().equals("PAG-IBIG")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(love);
-                }
-                if (tfidf.getAgency().equals("SSS")) {
-                    System.out.println(tfidf.getAgency());
-                    System.out.println(tfidf.getWord());
-                    System.out.println(sss);
-                }
+        for (int i = 0; i < ngramsss.size(); i++) {
+            Tfidf tfidf1 = tfidfService.findByWordAndAgency(ngramsss.get(i),"LTO");
+            Tfidf tfidf2 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
+            Tfidf tfidf3 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
+            Tfidf tfidf4 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
 
+            if(tfidf1!=null){
+                lto = lto + tfidf1.getTfidfVal();
+                System.out.println("word: "+tfidf1.getWord());
+                System.out.println("lto computation: "+lto);
             }
+            if(tfidf2!=null){
+                lra = lra + tfidf2.getTfidfVal();
+                System.out.println("word: "+tfidf2.getWord());
+                System.out.println("lra computation: "+lra);
+            }
+            if(tfidf3!=null){
+                love = love + tfidf3.getTfidfVal();
+                System.out.println("word: "+tfidf3.getWord());
+                System.out.println("love computation: "+love);
+            }
+            if(tfidf4!=null){
+                sss = sss + tfidf4.getTfidfVal();
+                System.out.println("word: "+tfidf4.getWord());
+                System.out.println("sss computation: "+sss);
+            }
+
             entry.put("LTO", lto);
             entry.put("LRA", lra);
             entry.put("PAG-IBIG", love);
             entry.put("SSS", sss);
         }
+
         result = maxVal(entry);
+
+        for (Map.Entry<String, Double> entryy : result.entrySet()) {
+            System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
+        }
 
 //        System.out.println("-----------RESULT-------------");
 //        for (Map.Entry<String, Double> e : result.entrySet()) {

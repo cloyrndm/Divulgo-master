@@ -52,9 +52,9 @@ public class TfidfService {
        return tfidfRepository.findByTfidfId(id);
     }
 
-//    public Tfidf findByWordAndAgency(String w, String a){
-//        return tfidfRepository.findByWordAndAgency(w,a);
-//    }
+    public Tfidf findByWordAndAgency(String w, String a){
+        return tfidfRepository.findByWordAndAgency(w,a);
+    }
     public Tfidf findByNgramIdAndAgency(int id, String a){
         return tfidfRepository.findByNgramIdAndAgency(id,a);
     }

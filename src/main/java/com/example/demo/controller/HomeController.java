@@ -191,11 +191,13 @@ public class HomeController {
 
     @PostMapping("/register")
     public String register(HttpServletRequest request){
-        Users user = new Users();
-        user.setUsername(request.getParameter("username"));
-        user.setEmail(request.getParameter("email"));
-        user.setPassword(request.getParameter("password"));
-        usersService.saveUser(user);
+        User users = new User();
+        users.setUsername(request.getParameter("username"));
+        users.setEmail(request.getParameter("email"));
+        users.setPassword(request.getParameter("password"));
+        users.setFirst_name(request.getParameter("firstname"));
+        users.setLast_name(request.getParameter("lastname"));
+        usersService.saveUser(users);
 
         return "login";
     }
@@ -229,15 +231,9 @@ public class HomeController {
         String agency=request.getParameter("agency");
         String url=request.getParameter("url");
         System.out.println(content);
-
-
-//        articleService.save(article);
-//        arts = Double.valueOf(article.getArtSize());
-
         article.setTitle(title);
         article.setTitle(url);
         article.setAgency(agency);
-//        article.setArtSize(count);
         article.setContent(content);
         articleService.save(article);
         cleanContent(content);
@@ -345,17 +341,9 @@ public class HomeController {
             }
         }
 
-
-
-
-
         return "index";
     }
-    @PostMapping("/postFile")
-    public String postFile(){
 
-        return "index";
-    }
 
 //    @GetMapping(value="/getArticles")
 //    public String getArticles(Model map){

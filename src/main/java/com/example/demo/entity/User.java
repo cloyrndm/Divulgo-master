@@ -33,6 +33,8 @@ public class User {
     @NotBlank
     private String password;
 
+    private String userType;
+
 //    @Column(name = "enabled", nullable = false)
 //    private boolean enabled;
 
@@ -84,4 +86,11 @@ public class User {
         this.password = password;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
 }

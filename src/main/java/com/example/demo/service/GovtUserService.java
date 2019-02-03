@@ -3,7 +3,6 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Complaint;
 import com.example.demo.entity.GovtUser;
-import com.example.demo.entity.User;
 
 import java.util.List;
 

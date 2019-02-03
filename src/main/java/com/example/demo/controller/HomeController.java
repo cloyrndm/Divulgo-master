@@ -37,8 +37,8 @@ import java.util.regex.Pattern;
 @Controller
 public class HomeController {
 
-//    @Autowired
-//    UsersService usersService;
+    @Autowired
+    UserService userService;
 
     @Autowired
     ArticleService articleService;
@@ -57,6 +57,10 @@ public class HomeController {
 
     @Autowired
     StopwordsService stopwordsService;
+
+    @Autowired
+    SentimentService sentimentService;
+
 
     @RequestMapping("/registration")
     public String gotoRegistration(){
@@ -232,26 +236,72 @@ public class HomeController {
 //    }
     //--------error bc deleted users entity
 
+
+    @PostMapping("/register")
+    public String register(HttpServletRequest request){
+        User users = new User();
+        String uType="admin";
+        users.setUsername(request.getParameter("username"));
+        users.setEmail(request.getParameter("email"));
+        users.setPassword(request.getParameter("password"));
+        users.setFirst_name(request.getParameter("firstname"));
+        users.setLast_name(request.getParameter("lastname"));
+        users.setUserType(uType);
+        userService.save(users);
+
+        return "login";
+    }
+    @RequestMapping("/goIndex")
+    public String goIndex(HttpServletRequest request, HttpSession session, Model model) {
+        User user= new User();
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        User sampleUser = userService.findByUsername(username);
+        if (sampleUser != null) {
+            session.setAttribute("user",sampleUser);
+            model.addAttribute("username", username);
+            String email=user.getEmail();
+            model.addAttribute("email", email);
+
+            int numArticles=articleService.getAll().size();
+            model.addAttribute("numArticles", numArticles);
+            model.addAttribute("msg","process web scraping...");
+            return "index";
+        }
+        else {
+            return "login";
+        }
+    }
+
     @PostMapping("/postText")
     public String text(HttpServletRequest request) throws IOException {
-        Article article = new Article();
-        String title=request.getParameter("title");
-        String content=request.getParameter("content");
-        String agency=request.getParameter("agency");
-        String url=request.getParameter("url");
-        System.out.println(content);
-
-
+//        Article article = new Article();
+//        String title=request.getParameter("title");
+//        String content=request.getParameter("content");
+//        String agency=request.getParameter("agency");
+//        String url=request.getParameter("url");
+//        System.out.println(content);
+//        article.setTitle(title);
+//        article.setUrl(url);
+//        article.setAgency(agency);
+//        article.setContent(content);
 //        articleService.save(article);
-//        arts = Double.valueOf(article.getArtSize());
+//        cleanContent(content);
+        Sentiment sent = new Sentiment();
+        String sentiment= request.getParameter("sentiment");
+        String rating = request.getParameter("rating");
+        Integer rate = Integer.valueOf(rating);
 
-        article.setTitle(title);
-        article.setTitle(url);
-        article.setAgency(agency);
-//        article.setArtSize(count);
-        article.setContent(content);
-        articleService.save(article);
-        cleanContent(content);
+//        PorterStemmer stemmer = new PorterStemmer();
+//        stemmer.setCurrent(sentiment);
+//        stemmer.stem();
+//        String steem=stemmer.getCurrent();
+
+        sent.setSentiment(sentiment);
+        sent.setRating(rate);
+        sentimentService.save(sent);
+
         return "index";
     }
 
@@ -356,17 +406,9 @@ public class HomeController {
             }
         }
 
-
-
-
-
         return "index";
     }
-    @PostMapping("/postFile")
-    public String postFile(){
 
-        return "index";
-    }
 
 //    @GetMapping(value="/getArticles")
 //    public String getArticles(Model map){

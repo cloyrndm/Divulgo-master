@@ -3,9 +3,15 @@ package com.example.demo.repository;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
- * Created by Cloie Andrea on 03/02/2019.
+ * Created by Katrina on 2/3/2019.
  */
-public interface UserRepository extends JpaRepository<User,Long> {
-    User findByUserId(Long id);
+@Repository
+public interface UserRepository extends JpaRepository<User, Integer> {
+
+    List<User> findAll();
+
+    User findByUsername(String username);
 }

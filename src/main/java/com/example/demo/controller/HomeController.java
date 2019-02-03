@@ -72,101 +72,101 @@ public class HomeController {
         return "test";
     }
 
-//    @RequestMapping("/getResult")
-//    public String result(HttpServletRequest request, Model model){
-//        String test = request.getParameter("testcontent");
-////        Article article = articleService.findByContent(test);
-////        String rAgency = article.getAgency();
-////        System.out.println(rAgency);
-//        String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
-//        ArrayList<String> stemList = new ArrayList<>();
-//
-//        for (String a : words) {
-//            PorterStemmer stemmer = new PorterStemmer();
-//            stemmer.setCurrent(a);
-//            stemmer.stem();
-//            String steem = stemmer.getCurrent();
-//            stemList.add(steem);
-//            System.out.println(steem);
-//
-//        }
-//        System.out.println(stemList.size());
-//        List<Tfidf> tfidf6 = tfidfService.findAll();
-//        Double love = 0.0;
-//        Double lra = 0.0;
-//        Double lto = 0.0;
-//        Double sss = 0.0;
-//        HashMap<String, Double> result = new HashMap<>();
-//        HashMap<String, Double> entry = new HashMap<>();
-//        for (int i = 0; i < tfidf6.size(); i++) {
-//            Tfidf tfidf = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
-//
-//            if (stemList.contains(tfidf.getWord())) {
-//                if (tfidf.getAgency().equals("LTO")) {
-//                    lto = lto + tfidf.getTfidfVal();
-////                    System.out.println(tfidf.getWord() + "<------>" + tfidf.getAgency());
-////                    System.out.println(tfidf.getWord() +" LTO value computation: " + lto + tfidf.getAgency());
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println(tfidf.getWord());
-//                    System.out.println(lto);
-////                    System.out.println(tfidf.getAgency());          System.out.println(tfidf.getAgency());
-////                    System.out.println("---------------");
-//
-//                }
-//                if (tfidf.getAgency().equals("LRA")) {
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println(tfidf.getWord());
-//                    System.out.println(lra);
-////                    System.out.println(tfidf.getAgency());
-////                    System.out.println("---------------");
-//                }
-//                if (tfidf.getAgency().equals("PAG-IBIG")) {
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println(tfidf.getWord());
-//                    System.out.println(love);
-////                    System.out.println(tfidf.getAgency());
-////                    System.out.println("---------------");
-//                }
-//                if (tfidf.getAgency().equals("SSS")) {
-//                    System.out.println(tfidf.getAgency());
-//                    System.out.println(tfidf.getWord());
-//                    System.out.println(sss);
-////                    System.out.println("---------------");
-//                }
-//
+    @RequestMapping("/getResult")
+    public String result(HttpServletRequest request, Model model){
+        String test = request.getParameter("testcontent");
+//        Article article = articleService.findByContent(test);
+//        String rAgency = article.getAgency();
+//        System.out.println(rAgency);
+        String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
+        ArrayList<String> stemList = new ArrayList<>();
+        ArrayList<String> ngramsss = new ArrayList<String>();
+
+        for (String a : words) {
+            PorterStemmer stemmer = new PorterStemmer();
+            stemmer.setCurrent(a);
+            stemmer.stem();
+            String steem = stemmer.getCurrent();
+            stemList.add(steem);
+            System.out.println(steem);
+
+        }
+
+        String str = String.join(" ", stemList);
+        for (int n = 1; n <=3; n++) {
+            for (String ngram : ngrams(n, str)){
+                ngramsss.add(ngram);
+                System.out.println(ngram);
+            }
+        }
+
+        System.out.println(ngramsss.size());
+        List<Tfidf> tfidf6 = tfidfService.findAll();
+        Double love = 0.0;
+        Double lra = 0.0;
+        Double lto = 0.0;
+        Double sss = 0.0;
+        HashMap<String, Double> result = new HashMap<>();
+        HashMap<String, Double> entry = new HashMap<>();
+        for (int i = 0; i < tfidf6.size(); i++) {
+            Tfidf tfidf = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
+
+            if (ngramsss.contains(tfidf.getWord())) {
+                if (tfidf.getAgency().equals("LTO")) {
+                    lto = lto + tfidf.getTfidfVal();
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(lto);
+                }
+                if (tfidf.getAgency().equals("LRA")) {
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(lra);
+                }
+                if (tfidf.getAgency().equals("PAG-IBIG")) {
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(love);
+                }
+                if (tfidf.getAgency().equals("SSS")) {
+                    System.out.println(tfidf.getAgency());
+                    System.out.println(tfidf.getWord());
+                    System.out.println(sss);
+                }
+
+            }
+            entry.put("LTO", lto);
+            entry.put("LRA", lra);
+            entry.put("PAG-IBIG", love);
+            entry.put("SSS", sss);
+        }
+        result = maxVal(entry);
+
+//        System.out.println("-----------RESULT-------------");
+//        for (Map.Entry<String, Double> e : result.entrySet()) {
+//            Test test1 = new Test();
+//            if(article.getAgency().equals(e.getKey())){
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("CORRECT");
+//                test1.setPhase("8");
+//                testService.save(test1);
+//                model.addAttribute("result","CORRECT");
 //            }
-//            entry.put("LTO", lto);
-//            entry.put("LRA", lra);
-//            entry.put("PAG-IBIG", love);
-//            entry.put("SSS", sss);
-//        }
-//        result = maxVal(entry);
+//            else{
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("INCORRECT");
+//                test1.setPhase("8");
+//                testService.save(test1);
+//                model.addAttribute("result","INCORRECT");
+//            }
 //
-////        System.out.println("-----------RESULT-------------");
-////        for (Map.Entry<String, Double> e : result.entrySet()) {
-////            Test test1 = new Test();
-////            if(article.getAgency().equals(e.getKey())){
-////                test1.setArticleid(article.getArtId());
-////                test1.setActualAgency(article.getAgency());
-////                test1.setPredictedAgency(e.getKey());
-////                test1.setResultl("CORRECT");
-////                test1.setPhase("8");
-////                testService.save(test1);
-////                model.addAttribute("result","CORRECT");
-////            }
-////            else{
-////                test1.setArticleid(article.getArtId());
-////                test1.setActualAgency(article.getAgency());
-////                test1.setPredictedAgency(e.getKey());
-////                test1.setResultl("INCORRECT");
-////                test1.setPhase("8");
-////                testService.save(test1);
-////                model.addAttribute("result","INCORRECT");
-////            }
-////
-////        }
-//        return "test";
-//    }
+//        }
+        return "test";
+    }
 
     public HashMap<String, Double> maxVal(HashMap<String, Double> values){
         HashMap<String, Double> max = new HashMap<>();
@@ -188,39 +188,44 @@ public class HomeController {
 
         return "index";
     }
+//--------error bc deleted users entity
+//    @PostMapping("/register")
+//    public String register(HttpServletRequest request){
+//        Users user = new Users();
+//        user.setUsername(request.getParameter("username"));
+//        user.setEmail(request.getParameter("email"));
+//        user.setPassword(request.getParameter("password"));
+//        usersService.saveUser(user);
+//
+//        return "login";
+//    }
+    //--------error bc deleted users entity
 
-    @PostMapping("/register")
-    public String register(HttpServletRequest request){
-        Users user = new Users();
-        user.setUsername(request.getParameter("username"));
-        user.setEmail(request.getParameter("email"));
-        user.setPassword(request.getParameter("password"));
-        usersService.saveUser(user);
+    //--------error bc deleted users entity
+//    @RequestMapping("/goIndex")
+//    public String goIndex(HttpServletRequest request, HttpSession session, Model model) {
+//        Users user= new Users();
+//        String username = request.getParameter("username");
+//        String password = request.getParameter("password");
+//
+//        Users sampleUser = usersService.findUserByUsername(username, password);
+//        if (sampleUser != null) {
+//            session.setAttribute("user",sampleUser);
+//            model.addAttribute("username", username);
+//            String email=user.getEmail();
+//            model.addAttribute("email", email);
+//
+//            int numArticles=articleService.getAll().size();
+//            model.addAttribute("numArticles", numArticles);
+//            model.addAttribute("msg","process web scraping...");
+//            return "index";
+//        }
+//        else {
+//            return "login";
+//        }
+//    }
+    //--------error bc deleted users entity
 
-        return "login";
-    }
-    @RequestMapping("/goIndex")
-    public String goIndex(HttpServletRequest request, HttpSession session, Model model) {
-        Users user= new Users();
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        Users sampleUser = usersService.findUserByUsername(username, password);
-        if (sampleUser != null) {
-            session.setAttribute("user",sampleUser);
-            model.addAttribute("username", username);
-            String email=user.getEmail();
-            model.addAttribute("email", email);
-
-            int numArticles=articleService.getAll().size();
-            model.addAttribute("numArticles", numArticles);
-            model.addAttribute("msg","process web scraping...");
-            return "index";
-        }
-        else {
-            return "login";
-        }
-    }
     @PostMapping("/postText")
     public String text(HttpServletRequest request) throws IOException {
         Article article = new Article();

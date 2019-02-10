@@ -41,6 +41,8 @@ public class Complaint {
 
     private String address;
 
+    private Integer sentimentRate;
+
 //    private String
 
 
@@ -156,5 +158,11 @@ public class Complaint {
         this.user_long = user_long;
     }
 
+    public Integer getSentimentRate() {
+        return sentimentRate;
+    }
 
+    public void setSentimentRate(Integer sentimentRate) {
+        this.sentimentRate = sentimentRate;
+    }
 }

@@ -2,11 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.*;
 
-import com.example.demo.repository.TestRepository;
-import com.example.demo.repository.TfidfRepository;
 import com.example.demo.service.*;
+import edu.smu.tspell.wordnet.Synset;
+import edu.smu.tspell.wordnet.WordNetDatabase;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.tomcat.jni.Error;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -23,13 +22,11 @@ import org.tartarus.snowball.ext.PorterStemmer;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.lang.reflect.Array;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 
 /**
  * Created by Katrina on 9/27/2018.
@@ -84,7 +81,56 @@ public class HomeController {
 //        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
+        ArrayList<String> wordsList = new ArrayList<>();
         ArrayList<String> ngramsss = new ArrayList<String>();
+
+        String regex = "[A-Z]+";
+        Pattern r = Pattern.compile(regex);
+//        File f=new File("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\WordNet\\2.1\\dict");
+//        System.setProperty("wordnet.database.dir", f.toString());
+//        //setting path for the WordNet Directory
+//
+//        WordNetDatabase database = WordNetDatabase.getFileInstance();
+        for (String word : words) {
+//            System.out.println(word);
+            wordsList.add(word);
+        }
+
+        Iterator<String> itr =wordsList.iterator();
+
+        while (itr.hasNext()) {
+
+            String w = itr.next();
+            Matcher m = r.matcher(w);
+            Stopwords sampleStopword = stopwordsService.findByStopwords(w);
+            if (m.find()) {
+                itr.remove();
+            }
+
+            else if (sampleStopword != null) {
+                itr.remove();
+            }
+        }
+
+
+//
+
+        int sentimentRate=0, sentId=0;
+        List<Sentiment> sents = sentimentService.findAll();
+        for (String senti: wordsList) {
+
+            Sentiment rate = sentimentService.findBySentiment(senti);
+
+            System.out.println("I WAS HERE " + senti );
+
+            if (rate!=null){
+                System.out.println("ME HEREEEEE");
+                sentId= rate.getSentimentId();
+                Sentiment getId = sentimentService.findBySentimentId(sentId);
+                sentimentRate+=getId.getRating();
+                System.out.println("rate:" + sentimentRate);
+            }
+        }
 
         for (String a : words) {
             PorterStemmer stemmer = new PorterStemmer();
@@ -100,11 +146,9 @@ public class HomeController {
         for (int n = 1; n <=3; n++) {
             for (String ngram : ngrams(n, str)){
                 ngramsss.add(ngram);
-                System.out.println(ngram);
             }
         }
 
-        System.out.println(ngramsss.size());
         List<Tfidf> tfidf6 = tfidfService.findAll();
         Double love = 0.0;
         Double lra = 0.0;
@@ -177,6 +221,23 @@ public class HomeController {
 //        }
         return "test";
     }
+
+//
+//    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+//    {
+//
+//        ArrayList<T> newList = new ArrayList<T>();
+//
+//        for (T element : list) {
+//
+//            if (!newList.contains(element)) {
+//
+//                newList.add(element);
+//            }
+//        }
+//
+//        return newList;
+//    }
 
     public HashMap<String, Double> maxVal(HashMap<String, Double> values){
         HashMap<String, Double> max = new HashMap<>();

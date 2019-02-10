@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -91,6 +90,16 @@ public class GovtUserController {
     private String homepage(Model model,ModelMap map,HttpSession session){
         String type = (String)session.getAttribute("type");
         List<Complaint> complaint = govtUserService.findByAgencyAndStatus(type,null);
+
+
+        Collections.sort(complaint, new Comparator<Complaint>() {
+            public int compare(final Complaint keyValue1, final Complaint keyValue2) {
+                return keyValue1.getSentimentRate().compareTo(keyValue2.getSentimentRate());
+            }
+        });
+
+//        System.out.println(ngramlist);
+//        map.addAttribute("ngramlist",ngramlist);
 //        System.out.println(complaint);
         System.out.println(type);
 //      --------------------------------------------------------

@@ -23,8 +23,16 @@ public class SentimentService {
     }
 
 
-    public List<Sentiment> getAll(){
+    public List<Sentiment> findAll(){
 
         return sentimentRepository.findAll();
+    }
+
+    public Sentiment findBySentiment(String sentiment) {
+        return sentimentRepository.findBySentiment(sentiment);
+    }
+
+    public Sentiment findBySentimentId(int id) {
+        return sentimentRepository.findBySentimentId(id);
     }
 }

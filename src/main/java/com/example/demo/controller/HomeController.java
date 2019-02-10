@@ -69,20 +69,20 @@ public class HomeController {
     }
     @RequestMapping("/goTest")
     public String gotoTest(){
-
-        return "test";
+        return "test2";
     }
 
     @RequestMapping("/getResult")
     public String result(HttpServletRequest request, Model model){
         String test = request.getParameter("testcontent");
-//        Article article = articleService.findByContent(test);
-//        String rAgency = article.getAgency();
-//        System.out.println(rAgency);
+        Article article = articleService.findByContent(test);
+        String rAgency = article.getAgency();
+        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
         ArrayList<String> wordsList = new ArrayList<>();
         ArrayList<String> ngramsss = new ArrayList<String>();
+
 
         String regex = "[A-Z]+";
         Pattern r = Pattern.compile(regex);
@@ -132,6 +132,7 @@ public class HomeController {
             }
         }
 
+
         for (String a : words) {
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(a);
@@ -159,9 +160,9 @@ public class HomeController {
 
         for (int i = 0; i < ngramsss.size(); i++) {
             Tfidf tfidf1 = tfidfService.findByWordAndAgency(ngramsss.get(i),"LTO");
-            Tfidf tfidf2 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
-            Tfidf tfidf3 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
-            Tfidf tfidf4 = tfidfService.findByTfidfId(tfidf6.get(i).getTfidfId());
+            Tfidf tfidf2 = tfidfService.findByWordAndAgency(ngramsss.get(i),"LRA");
+            Tfidf tfidf3 = tfidfService.findByWordAndAgency(ngramsss.get(i),"PAG-IBIG");
+            Tfidf tfidf4 = tfidfService.findByWordAndAgency(ngramsss.get(i),"SSS");
 
             if(tfidf1!=null){
                 lto = lto + tfidf1.getTfidfVal();
@@ -192,34 +193,34 @@ public class HomeController {
 
         result = maxVal(entry);
 
-        for (Map.Entry<String, Double> entryy : result.entrySet()) {
-            System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
-        }
-
-//        System.out.println("-----------RESULT-------------");
-//        for (Map.Entry<String, Double> e : result.entrySet()) {
-//            Test test1 = new Test();
-//            if(article.getAgency().equals(e.getKey())){
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("CORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","CORRECT");
-//            }
-//            else{
-//                test1.setArticleid(article.getArtId());
-//                test1.setActualAgency(article.getAgency());
-//                test1.setPredictedAgency(e.getKey());
-//                test1.setResultl("INCORRECT");
-//                test1.setPhase("8");
-//                testService.save(test1);
-//                model.addAttribute("result","INCORRECT");
-//            }
-//
+//        for (Map.Entry<String, Double> entryy : result.entrySet()) {
+//            System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
 //        }
-        return "test";
+
+        System.out.println("-----------RESULT-------------");
+        for (Map.Entry<String, Double> e : result.entrySet()) {
+            Test test1 = new Test();
+            if(article.getAgency().equals(e.getKey())){
+                test1.setArticleid(article.getArtId());
+                test1.setActualAgency(article.getAgency());
+                test1.setPredictedAgency(e.getKey());
+                test1.setResultl("CORRECT");
+                test1.setPhase("1");
+                testService.save(test1);
+                model.addAttribute("result","CORRECT");
+            }
+            else{
+                test1.setArticleid(article.getArtId());
+                test1.setActualAgency(article.getAgency());
+                test1.setPredictedAgency(e.getKey());
+                test1.setResultl("INCORRECT");
+                test1.setPhase("1");
+                testService.save(test1);
+                model.addAttribute("result","INCORRECT");
+            }
+
+        }
+        return "test2";
     }
 
 //

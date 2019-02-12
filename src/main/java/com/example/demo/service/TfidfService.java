@@ -40,6 +40,13 @@ public class TfidfService {
         return tfidfRepository.findByAgency(a);
     }
 
+
+    //Kat added this function:
+    public Tfidf findByWord(String word){
+        return tfidfRepository.findByWord(word);
+    }
+
+
 //    public Tfidf findByFreqId(int id){
 //        return tfidfRepository.findByFreqId(id);
 //    }

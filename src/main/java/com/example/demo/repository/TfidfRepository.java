@@ -22,6 +22,7 @@ public interface TfidfRepository extends JpaRepository<Tfidf,Long> {
     Tfidf findByNgramId(int id);
     Tfidf findByFreqId(int id);
     Tfidf findByTfidfId(int id);
+    Tfidf findByWord(String word);
     Tfidf findByAgency(String a);
     Tfidf findByWordAndAgency(String w, String a);
     Tfidf findByFreqIdAndNgramId(int id1, int id2);

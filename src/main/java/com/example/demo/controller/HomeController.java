@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Katrina on 9/27/2018.
  */
+@SuppressWarnings("Duplicates")
 @Controller
 public class HomeController {
 
@@ -72,7 +73,7 @@ public class HomeController {
     }
     @RequestMapping("/goTest")
     public String gotoTest(){
-        return "test2";
+        return "test";
     }
 
     @RequestMapping("/getResult")
@@ -84,7 +85,30 @@ public class HomeController {
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
         ArrayList<String> ngramsss = new ArrayList<String>();
+        ArrayList<String> wordsList = new ArrayList<String>();
+        String regex = "[A-Z]+";
+        Pattern r = Pattern.compile(regex);
 
+        for (String word : words) {
+            System.out.println(word);
+            wordsList.add(word);
+        }
+
+        Iterator<String> itr =wordsList.iterator();
+
+        while (itr.hasNext()) {
+
+            String w = itr.next();
+            Matcher m = r.matcher(w);
+            Stopwords sampleStopword = stopwordsService.findByStopwords(w);
+            if (m.find()) {
+                itr.remove();
+            }
+
+            else if (sampleStopword != null) {
+                itr.remove();
+            }
+        }
 
         for (String a : words) {
             PorterStemmer stemmer = new PorterStemmer();
@@ -160,22 +184,22 @@ public class HomeController {
                 test1.setActualAgency(article.getAgency());
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("CORRECT");
-                test1.setPhase("1");
+                test1.setPhase("10");
                 testService.save(test1);
                 model.addAttribute("result","CORRECT");
             }
-            else{
+                else{
                 test1.setArticleid(article.getArtId());
                 test1.setActualAgency(article.getAgency());
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("INCORRECT");
-                test1.setPhase("1");
+                test1.setPhase("10");
                 testService.save(test1);
                 model.addAttribute("result","INCORRECT");
             }
 
         }
-        return "test2";
+        return "test";
     }
 
     public HashMap<String, Double> maxVal(HashMap<String, Double> values){

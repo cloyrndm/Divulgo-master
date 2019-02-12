@@ -22,9 +22,8 @@ import java.util.List;
 /**
  * Created by Cloie Andrea on 01/10/2018.
  */
-
+@SuppressWarnings("Duplicates")
 @Controller
-//@RequestMapping(value="/gov")
 public class GovtUserController {
 
      @Autowired
@@ -154,8 +153,6 @@ public class GovtUserController {
 
     @RequestMapping("govcorrection")
     private String correction(HttpServletRequest request,HttpSession session, Model model,ModelMap map,ComplaintReply complaintReply) throws IOException {
-//        HttpServletRequest request1 = new HttpServletRequest();
-//        Model model1 = new Model()
 
         String complaint = request.getParameter("complaint");
         String agency = request.getParameter("agency");

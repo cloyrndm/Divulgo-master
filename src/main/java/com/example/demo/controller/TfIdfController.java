@@ -15,6 +15,7 @@ import java.util.*;
 /**
  * Created by Cloie Andrea on 13/11/2018.
  */
+@SuppressWarnings("Duplicates")
 @Controller
 public class TfIdfController {
 

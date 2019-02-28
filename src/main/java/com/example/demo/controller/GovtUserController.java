@@ -91,11 +91,11 @@ public class GovtUserController {
         List<Complaint> complaint = govtUserService.findByAgencyAndStatus(type,null);
 
 
-        Collections.sort(complaint, new Comparator<Complaint>() {
-            public int compare(final Complaint keyValue1, final Complaint keyValue2) {
-                return keyValue1.getSentimentRate().compareTo(keyValue2.getSentimentRate());
-            }
-        });
+//        Collections.sort(complaint, new Comparator<Complaint>() {
+//            public int compare(final Complaint keyValue1, final Complaint keyValue2) {
+//                return keyValue1.getSentimentRate().compareTo(keyValue2.getSentimentRate());
+//            }
+//        });
 
 //        System.out.println(ngramlist);
 //        map.addAttribute("ngramlist",ngramlist);
@@ -160,6 +160,7 @@ public class GovtUserController {
 
 
 
+
     @RequestMapping("govcorrection")
     private String correction(HttpServletRequest request,HttpSession session, Model model,ModelMap map,ComplaintReply complaintReply) throws IOException {
 
@@ -168,8 +169,6 @@ public class GovtUserController {
         String id = request.getParameter("id");
         long idd = Long.valueOf(id);
 
-
-
         Complaint complaint1 = complaintService.findByComplaintId(idd);
         complaint1.setAgency(agency);
 //        complaint1.setTrainStatus("1");
@@ -177,18 +176,18 @@ public class GovtUserController {
         complaintService.save(complaint1);
 
 
-            Article article = new Article();
-            article.setContent(complaint);
-            article.setAgency(agency);
-            article.setTitle("retrain");
-            articleService.save(article);
-
-        homeController.cleanContent(complaint);
-        tfIdfController.TermFrequency();
-        tfIdfController.wordcount();
-        tfIdfController.InverseTermFrequency();
-//        tfIdfController.clean();
-        tfIdfController.TermFrequencyAndInverseTermFrequency();
+//            Article article = new Article();
+//            article.setContent(complaint);
+//            article.setAgency(agency);
+//            article.setTitle("retrain");
+//            articleService.save(article);
+//
+//        homeController.cleanContent(complaint);
+//        tfIdfController.TermFrequency();
+//        tfIdfController.wordcount();
+//        tfIdfController.InverseTermFrequency();
+////        tfIdfController.clean();
+//        tfIdfController.TermFrequencyAndInverseTermFrequency();
 
             String type = (String) session.getAttribute("type");
             List<Complaint> complaint2 = govtUserService.findByAgencyAndStatus(type, null);
@@ -241,18 +240,18 @@ public class GovtUserController {
         String complaintt = request.getParameter("complaint");
         System.out.println(complaintt);
 
-        Article article = new Article();
-        article.setContent(complaintt);
-        article.setAgency(agency);
-        article.setTitle("train");
-        articleService.save(article);
+//        Article article = new Article();
+//        article.setContent(complaintt);
+//        article.setAgency(agency);
+//        article.setTitle("train");
+//        articleService.save(article);
 
-        homeController.cleanContent(complaintt);
-        tfIdfController.TermFrequency();
-        tfIdfController.wordcount();
-        tfIdfController.InverseTermFrequency();
-//        tfIdfController.clean();
-        tfIdfController.TermFrequencyAndInverseTermFrequency();
+//        homeController.cleanContent(complaintt);
+//        tfIdfController.TermFrequency();
+//        tfIdfController.wordcount();
+//        tfIdfController.InverseTermFrequency();
+////        tfIdfController.clean();
+//        tfIdfController.TermFrequencyAndInverseTermFrequency();
 
 //      --------------------save to database---------------------
         complaintReply.setComplaintId(Long.parseLong(complaintId));

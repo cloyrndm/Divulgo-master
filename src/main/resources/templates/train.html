@@ -10,7 +10,7 @@
     <meta name="keywords" content="au theme template">
 
     <!-- Title Page-->
-    <title>Article Table</title>
+    <title>Complaints</title>
 
     <!-- Fontfaces CSS-->
     <link href="css/font-face.css" rel="stylesheet" media="all">
@@ -68,6 +68,11 @@
                             <i class="fas fa-copy"></i>Test</a>
                     </li>
 
+                    <li>
+                        <a href="/goTrain">
+                            <i class="fas fa-copy"></i>Train Data</a>
+                    </li>
+
                 </ul>
             </div>
         </nav>
@@ -87,12 +92,16 @@
                     <li class="active has-sub">
                         <a class="js-arrow" href="/goIndex">
                             <i class="fas fa-tachometer-alt"></i>Train</a>
-
                     </li>
 
                     <li>
                         <a href="/goTest">
                             <i class="fas fa-copy"></i>Test</a>
+                    </li>
+
+                    <li>
+                        <a href="/goTrain">
+                            <i class="fas fa-copy"></i>Train Data</a>
                     </li>
 
                 </ul>
@@ -132,20 +141,28 @@
                                 <table class="table table-borderless table-data3">
                                     <thead>
                                     <tr>
-                                        <th>Words</th>
-                                        <th>Frequency</th>
-                                        <!--<th>-&#45;&#45;&#45;&#45;&#45;&#45;s</th>-->
-
+                                        <th>Complaint ID</th>
+                                        <th>Complaint</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="i: ${ngramlist}">
-                                        <td th:text="${i.words}"></td>
-                                        <td th:text="${i.wordCount}"></td>
+                                    <tr th:each="i: ${complaint}">
+                                        <form method = "POST" action = "govtrain">
+                                        <td th:text="${i.complaint_id}"></td>
+                                        <td th:text="${i.user_complaint}"></td>
+                                            <input type="hidden" th:value="${i.complaint_id}" name="id">
+                                            <input type="hidden" th:value="${i.user_complaint}" name="complaint">
+                                            <td>
+                                            <button type="submit" id="erase1">Train</button>
+                                            </td>
+
+                                        </form>
                                         <!--<form method = "POST" action = "/getArticleIds">-->
-                                            <!--<input type="hidden" th:value="${i.ngramId}" name="id">-->
-                                            <!--<td>-->
-                                                <!--<button type="submit" id="erase1">NGRAM</button>-->
+                                        <!--<input type="hidden" th:value="${i.ngramId}" name="id">-->
+                                        <!--<td>-->
+                                        <!--<button type="submit" id="erase1">NGRAM</button>-->
+                                        <!--</td>-->
                                         <!--</form>-->
                                     </tr>
 

@@ -41,10 +41,30 @@ public class Complaint {
 
     private String address;
 
-    private Integer sentimentRate;
+    private String sentiment;
+
+    private String anon;
+
+//    private Integer sentimentRate;
 
 //    private String
 
+
+    public String getAnon() {
+        return anon;
+    }
+
+    public void setAnon(String anon) {
+        this.anon = anon;
+    }
+
+    public String getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
+    }
 
     public String getAddress() {
         return address;
@@ -158,11 +178,11 @@ public class Complaint {
         this.user_long = user_long;
     }
 
-    public Integer getSentimentRate() {
-        return sentimentRate;
-    }
-
-    public void setSentimentRate(Integer sentimentRate) {
-        this.sentimentRate = sentimentRate;
-    }
+//    public Integer getSentimentRate() {
+//        return sentimentRate;
+//    }
+//
+//    public void setSentimentRate(Integer sentimentRate) {
+//        this.sentimentRate = sentimentRate;
+//    }
 }

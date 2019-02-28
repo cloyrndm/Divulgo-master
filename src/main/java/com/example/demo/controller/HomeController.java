@@ -3,8 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entity.*;
 
 import com.example.demo.service.*;
-import edu.smu.tspell.wordnet.Synset;
-import edu.smu.tspell.wordnet.WordNetDatabase;
+//import edu.smu.tspell.wordnet.Synset;
+//import edu.smu.tspell.wordnet.WordNetDatabase;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,6 +59,12 @@ public class HomeController {
     @Autowired
     SentimentService sentimentService;
 
+    @Autowired
+    ComplaintService complaintService;
+
+    @Autowired
+    TfIdfController tfIdfController;
+
 
     @RequestMapping("/registration")
     public String gotoRegistration(){
@@ -73,48 +79,129 @@ public class HomeController {
         return "test";
     }
 
+    //continue later
+    @RequestMapping("/goUnclassified")
+    public String goUnclasssified(){
+//        List
+//
+        return "unclassified";
+    }
+
+    @RequestMapping("/govUnclassified")
+    public String govUnclasssified(HttpServletRequest request, Model model){
+        String complaint = request.getParameter("complaint");
+        String agency = request.getParameter("agency");
+        String id = request.getParameter("id");
+        long idd = Long.valueOf(id);
+
+        Complaint complaint1 = complaintService.findByComplaintId(idd);
+        complaint1.setAgency(agency);
+        complaintService.save(complaint1);
+
+        return "unclassified";
+    }
+
+    @RequestMapping("/goTrain")
+    public String goTrain(Model model){
+        List<Complaint> complaint = complaintService.findByStatusAndTrainStatus("1",null);
+        model.addAttribute("complaint",complaint);
+        return "train";
+    }
+
+   @RequestMapping("govtrain")
+   public String govTrain(HttpServletRequest request, Model model) throws IOException {
+       Article article = new Article();
+       String agency = request.getParameter("agency");
+       String complaint_id = request.getParameter("id");
+       String complaint = request.getParameter("complaint");
+
+       Complaint complaint2 = complaintService.findByComplaintId(Long.valueOf(complaint_id));
+       complaint2.setTrainStatus("1");
+       complaintService.save(complaint2);
+
+       int count = new StringTokenizer(complaint).countTokens();
+       System.out.println(count);
+       article.setContent(complaint2.getUser_complaint());
+       article.setAgency(complaint2.getAgency());
+       article.setTitle("Complaint From The Citizens");
+       article.setArtSize(count);
+       articleService.save(article);
+       cleanContent(complaint);
+       System.out.println("----------------------starting term frequency process------------------------");
+       System.out.println("saving...");
+       tfIdfController.TermFrequency();
+       System.out.println("------------------------end of term frequency process------------------------");
+       System.out.println("-------------------------start idf count-------------------------------------");
+       System.out.println("saving...");
+       tfIdfController.wordcount();
+       System.out.println("-------------------------end count-------------------------------------------");
+       System.out.println("----------------------starting idf frequency process------------------------");
+       System.out.println("saving...");
+       tfIdfController.InverseTermFrequency();
+       System.out.println("----------------------end idf process---------------------------------------");
+       System.out.println("-------------------start tfidf process--------------------------------------");
+       System.out.println("saving...");
+       tfIdfController.TermFrequencyAndInverseTermFrequency();
+       System.out.println("---------------------------------------end----------------------------------");
+
+       List<Complaint> complaint1 = complaintService.findByStatusAndTrainStatus("1",null);
+       model.addAttribute("complaint",complaint1);
+       return "train";
+   }
+
+    @RequestMapping("adtrain")
+    public String adminTrain(HttpServletRequest request, Model model) throws IOException {
+
+        String agency = request.getParameter("agency");
+        String complaint = request.getParameter("complaint");
+
+        int count = new StringTokenizer(complaint).countTokens();
+        System.out.println(count);
+        Article article = new Article();
+        article.setContent(complaint);
+        article.setAgency(agency);
+        article.setTitle("Complaint From The Citizens");
+        article.setArtSize(count);
+        articleService.save(article);
+
+        cleanContent(complaint);
+        System.out.println("----------------------starting term frequency process------------------------");
+        System.out.println("saving...");
+        tfIdfController.TermFrequency();
+        System.out.println("------------------------end of term frequency process------------------------");
+        System.out.println("-------------------------start idf count-------------------------------------");
+        System.out.println("saving...");
+        tfIdfController.wordcount();
+        System.out.println("-------------------------end count-------------------------------------------");
+        System.out.println("----------------------starting idf frequency process------------------------");
+        System.out.println("saving...");
+        tfIdfController.InverseTermFrequency();
+        System.out.println("----------------------end idf process---------------------------------------");
+        System.out.println("-------------------start tfidf process--------------------------------------");
+        System.out.println("saving...");
+        tfIdfController.TermFrequencyAndInverseTermFrequency();
+        System.out.println("---------------------------------------end----------------------------------");
+
+        List<Complaint> complaint1 = complaintService.findByStatusAndTrainStatus("1",null);
+        model.addAttribute("complaint",complaint1);
+        return "index";
+    }
+
     @RequestMapping("/getResult")
     public String result(HttpServletRequest request, Model model){
         String test = request.getParameter("testcontent");
-        Article article = articleService.findByContent(test);
-        String rAgency = article.getAgency();
-        System.out.println(rAgency);
+        String agency = request.getParameter("agency");
+//        Article article = articleService.findByContent(test);
+//        String rAgency = article.getAgency();
+//        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
         ArrayList<String> wordsList = new ArrayList<>();
         ArrayList<String> ngramsss = new ArrayList<String>();
-        ArrayList<String> wordsList = new ArrayList<String>();
+//        ArrayList<String> wordsList = new ArrayList<String>();
         String regex = "[A-Z]+";
         Pattern r = Pattern.compile(regex);
 
-        for (String word : words) {
-            System.out.println(word);
-            wordsList.add(word);
-        }
-
-        Iterator<String> itr =wordsList.iterator();
-
-        while (itr.hasNext()) {
-
-            String w = itr.next();
-            Matcher m = r.matcher(w);
-            Stopwords sampleStopword = stopwordsService.findByStopwords(w);
-            if (m.find()) {
-                itr.remove();
-            }
-
-            else if (sampleStopword != null) {
-                itr.remove();
-            }
-        }
-
-        String regex = "[A-Z]+";
-        Pattern r = Pattern.compile(regex);
-//        File f=new File("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\WordNet\\2.1\\dict");
-//        System.setProperty("wordnet.database.dir", f.toString());
-//        //setting path for the WordNet Directory
-//
-//        WordNetDatabase database = WordNetDatabase.getFileInstance();
         for (String word : words) {
 //            System.out.println(word);
             wordsList.add(word);
@@ -136,35 +223,63 @@ public class HomeController {
             }
         }
 
-
+//        String regex = "[A-Z]+";
+//        Pattern r = Pattern.compile(regex);
+//        File f=new File("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\WordNet\\2.1\\dict");
+//        System.setProperty("wordnet.database.dir", f.toString());
+//        //setting path for the WordNet Directory
 //
-
-        int sentimentRate=0, sentId=0;
-        List<Sentiment> sents = sentimentService.findAll();
-        for (String senti: wordsList) {
-
-            Sentiment rate = sentimentService.findBySentiment(senti);
-
-            System.out.println("I WAS HERE " + senti );
-
-            if (rate!=null){
-                System.out.println("ME HEREEEEE");
-                sentId= rate.getSentimentId();
-                Sentiment getId = sentimentService.findBySentimentId(sentId);
-                sentimentRate+=getId.getRating();
-                System.out.println("rate:" + sentimentRate);
-            }
+//        WordNetDatabase database = WordNetDatabase.getFileInstance();
+        for (String word : wordsList) {
+//            System.out.println(word);
+            System.out.println(word);
+//            wordsList.add(word);
         }
 
+//        Iterator<String> itr =wordsList.iterator();
+//
+//        while (itr.hasNext()) {
+//
+//            String w = itr.next();
+//            Matcher m = r.matcher(w);
+//            Stopwords sampleStopword = stopwordsService.findByStopwords(w);
+//            if (m.find()) {
+//                itr.remove();
+//            }
+//
+//            else if (sampleStopword != null) {
+//                itr.remove();
+//            }
+//        }
 
-        for (String a : words) {
+
+//
+//SENTIMENT
+//        int sentimentRate=0, sentId=0;
+//        List<Sentiment> sents = sentimentService.findAll();
+//        for (String senti: wordsList) {
+//
+//            Sentiment rate = sentimentService.findBySentiment(senti);
+//
+//            System.out.println("I WAS HERE " + senti );
+//
+//            if (rate!=null){
+//                System.out.println("ME HEREEEEE");
+//                sentId= rate.getSentimentId();
+//                Sentiment getId = sentimentService.findBySentimentId(sentId);
+//                sentimentRate+=getId.getRating();
+//                System.out.println("rate:" + sentimentRate);
+//            }
+//        }
+
+
+        for (String a : wordsList) {
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(a);
             stemmer.stem();
             String steem = stemmer.getCurrent();
             stemList.add(steem);
             System.out.println(steem);
-
         }
 
         String str = String.join(" ", stemList);
@@ -174,11 +289,18 @@ public class HomeController {
             }
         }
 
+        System.out.println("WORDS: ");
+        for(String x : ngramsss){
+            System.out.println(x);
+        }
+        System.out.println("------------");
+
         List<Tfidf> tfidf6 = tfidfService.findAll();
         Double love = 0.0;
         Double lra = 0.0;
         Double lto = 0.0;
         Double sss = 0.0;
+//        Double val = 0.0;
         HashMap<String, Double> result = new HashMap<>();
         HashMap<String, Double> entry = new HashMap<>();
 
@@ -191,54 +313,76 @@ public class HomeController {
             if(tfidf1!=null){
                 lto = lto + tfidf1.getTfidfVal();
                 System.out.println("word: "+tfidf1.getWord());
+                System.out.println("tf = "+tfidf1.getTfVal());
+                System.out.println("idf = "+tfidf1.getIdfVal());
+                System.out.println("tf-idf = "+tfidf1.getTfidfVal());
                 System.out.println("lto computation: "+lto);
+                System.out.println("------------");
             }
             if(tfidf2!=null){
                 lra = lra + tfidf2.getTfidfVal();
                 System.out.println("word: "+tfidf2.getWord());
+                System.out.println("tf = "+tfidf2.getTfVal());
+                System.out.println("idf = "+tfidf2.getIdfVal());
+                System.out.println("tf-idf = "+tfidf2.getTfidfVal());
                 System.out.println("lra computation: "+lra);
+                System.out.println("------------");
             }
             if(tfidf3!=null){
                 love = love + tfidf3.getTfidfVal();
                 System.out.println("word: "+tfidf3.getWord());
+                System.out.println("tf = "+tfidf3.getTfVal());
+                System.out.println("idf = "+tfidf3.getIdfVal());
+                System.out.println("tf-idf = "+tfidf3.getTfidfVal());
                 System.out.println("love computation: "+love);
+                System.out.println("------------");
             }
             if(tfidf4!=null){
                 sss = sss + tfidf4.getTfidfVal();
                 System.out.println("word: "+tfidf4.getWord());
+                System.out.println("tf = "+tfidf4.getTfVal());
+                System.out.println("idf = "+tfidf4.getIdfVal());
+                System.out.println("tf-idf = "+tfidf4.getTfidfVal());
                 System.out.println("sss computation: "+sss);
+                System.out.println("------------");
             }
+//            else{
+//                val = val + 1;
+//            }
 
             entry.put("LTO", lto);
             entry.put("LRA", lra);
             entry.put("PAG-IBIG", love);
             entry.put("SSS", sss);
+//            entry.put("UNCLASSIFIED",val);
         }
 
         result = maxVal(entry);
 
-//        for (Map.Entry<String, Double> entryy : result.entrySet()) {
-//            System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
-//        }
+        for (Map.Entry<String, Double> entryy : result.entrySet()) {
+            System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
+        }
 
         System.out.println("-----------RESULT-------------");
         for (Map.Entry<String, Double> e : result.entrySet()) {
             Test test1 = new Test();
-            if(article.getAgency().equals(e.getKey())){
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
+//            if(article.getAgency().equals(e.getKey())){
+            if(agency.equals(e.getKey())){
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+                test1.setActualAgency(agency);
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("CORRECT");
-                test1.setPhase("10");
+                test1.setPhase("1.1");
                 testService.save(test1);
                 model.addAttribute("result","CORRECT");
             }
                 else{
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
+//                test1.setArticleid(article.getArtId());
+                test1.setActualAgency(agency);
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("INCORRECT");
-                test1.setPhase("10");
+                test1.setPhase("1.1");
                 testService.save(test1);
                 model.addAttribute("result","INCORRECT");
             }
@@ -276,6 +420,9 @@ public class HomeController {
         for (Map.Entry<String, Double> entry : values.entrySet())
             if(entry.getValue()==maxval)
                 max.put(entry.getKey(),entry.getValue());
+            else if(maxval == 0.0){
+                max.put("UNCLASSIFIED",0.0);
+            }
         return max;
     }
 

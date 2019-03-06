@@ -84,19 +84,33 @@
             <thead>
             <tr>
                 <th>Feedback Id</th>
+                <th>User Id</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Feedback</th>
                 <th>View Image</th>
                 <th>Address</th>
-                <!--<th>Latitude</th>-->
                 <th>Agency</th>
+                <th>Sentiment</th>
                 <th>Reply</th>
             </tr>
             </thead>
             <tbody>
+
             <tr th:each="complaints : ${complaint}">
                 <td th:text="${complaints.complaint_id}"></td>
+                <!--<td th:text = "${complaints.userId}">-->
+
+                <!--</td>-->
+                <td th:switch = "${complaints.anon}">
+                    <span th:case="'anon'">anonymous</span>
+                    <span th:case="*" th:text="${complaints.userId}"></span>
+                </td>
+                <!--<td th:switch="${complaints.sentiment}" style='font-size:40px;'>-->
+                    <!--<span th:case="'light'">&#128547;</span>-->
+                    <!--<span th:case="'medium'">&#128548;</span>-->
+                    <!--<span th:case="'intense'">&#128545;</span>-->
+                <!--</td>-->
                 <td th:text="${complaints.date}"></td>
                 <td th:text="${complaints.time}"></td>
                 <td th:text="${complaints.user_complaint}"></td>
@@ -117,17 +131,17 @@
                                     <option value="PAG-IBIG">PAG-IBIG</option>
                                     <option value="SSS">SSS</option>
                                 </select>
-                            <!--<span class="input-group-btn">-->
                                 <button type="submit" id="erase1">&#9993;</button>
-                                <!--</span>-->
                         </div>
                     </td>
                     </form>
 
-                <!--</form>-->
+                <td th:switch="${complaints.sentiment}" style='font-size:40px;'>
+                    <span th:case="'light'">&#128547;</span>
+                    <span th:case="'medium'">&#128548;</span>
+                    <span th:case="'intense'">&#128545;</span>
+                </td>
                 <form method = "POST" action = "govreply">
-                    <!--String complaintId = request.getParameter("complaintid");-->
-                    <!--String agency = request.getParameter("complaintagency");-->
                     <input type="hidden" th:value="${complaints.complaint_id}" name="complaintid">
                     <input type="hidden" th:value="${complaints.userId}" name="uid">
                     <input type="hidden" th:value="${complaints.agency}" name="complaintagency">
@@ -148,6 +162,7 @@
 
 
         </table>
+        <!--<i class='far fa-angry' style='font-size:48px;color:red'></i>-->
     </div>
 </div>
 </body>

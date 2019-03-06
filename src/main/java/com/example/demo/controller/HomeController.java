@@ -639,7 +639,7 @@ public class HomeController {
 //            System.out.println(kat);
             Sentiment emotion=sentimentService.findBySentiment(wordEmoticon.get(aaa));
 
-            if (emotion!=null) {
+            if (emotion!=null && (wordEmoticon.get(aaa+1)!= wordEmoticon.get(aaa))) {
 //                HashSet hs = new HashSet();
 //                hs.addAll(emojis);
 //                emojis.clear();

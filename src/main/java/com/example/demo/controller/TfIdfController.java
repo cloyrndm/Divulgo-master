@@ -15,6 +15,7 @@ import java.util.*;
 /**
  * Created by Cloie Andrea on 13/11/2018.
  */
+@SuppressWarnings("Duplicates")
 @Controller
 public class TfIdfController {
 
@@ -72,12 +73,13 @@ public class TfIdfController {
             if(freq.get(i).getStat()==null) {
                 Ngram ngram = ngramService.findByNgramId(freq.get(i).getNgramId());
                 if (ngram.getNgramId().equals(freq.get(i).getNgramId()) && ngram.getIdfWcount() == null) {
+                    System.out.println("firstttt");
                     ngram.setIdfWcount(1);
                     ngramService.save(ngram);
-
                     freq.get(i).setStat("1");
                     frequencyService.save(freq.get(i));
                 } else if (ngram.getNgramId().equals(freq.get(i).getNgramId()) && ngram.getIdfWcount() != null) {
+                    System.out.println("secondddd");
                     ngram.setIdfWcount(ngram.getIdfWcount() + 1);
                     ngramService.save(ngram);
 
@@ -89,6 +91,8 @@ public class TfIdfController {
     }
 
     public void InverseTermFrequency() {
+//        wordcount();
+
         List<Article> a = articleService.findAll();
         int size = a.size();
 

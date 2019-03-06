@@ -1,8 +1,11 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.Complaint;
 import com.example.demo.entity.GovtUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by Cloie Andrea on 01/10/2018.

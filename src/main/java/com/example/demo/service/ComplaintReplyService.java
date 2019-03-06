@@ -31,4 +31,8 @@ public class ComplaintReplyService {
     public List<ComplaintReply> findByAgencyAndUserid(String agency, Long id) {
         return complaintReplyRepository.findByAgencyAndUserid(agency,id);
     }
+
+//    public List<ComplaintReply> findByStatus(String c){
+//        return complaintReplyRepository.findByStatus(c);
+//    }
 }

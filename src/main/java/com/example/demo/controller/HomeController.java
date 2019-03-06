@@ -5,7 +5,10 @@ import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import edu.smu.tspell.wordnet.Synset;
 import edu.smu.tspell.wordnet.WordNetDatabase;
+import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import emoji4j.EmojiUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -26,7 +29,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+//import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by Katrina on 9/27/2018.
@@ -76,24 +79,28 @@ public class HomeController {
     public String result(HttpServletRequest request, Model model){
         String test = request.getParameter("testcontent");
         Article article = articleService.findByContent(test);
-        String rAgency = article.getAgency();
-        System.out.println(rAgency);
+//        String rAgency = article.getAgency();
+//        System.out.println(rAgency);
         String[] words = test.replaceAll("[^a-zA-Z ]", "").split("\\s+");
         ArrayList<String> stemList = new ArrayList<>();
         ArrayList<String> wordsList = new ArrayList<>();
         ArrayList<String> ngramsss = new ArrayList<String>();
+        ArrayList<String> ngramss = new ArrayList<String>();
+        ArrayList<String> tempList= new ArrayList<String>();
+        ArrayList<String> wordnetStem = new ArrayList<String>();
+        File f=new File("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\WordNet-3.0\\dict");
+        System.setProperty("wordnet.database.dir", f.toString());
+        //setting path for the WordNet Directory
 
+        WordNetDatabase database = WordNetDatabase.getFileInstance();
 
         String regex = "[A-Z]+";
         Pattern r = Pattern.compile(regex);
-//        File f=new File("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\WordNet\\2.1\\dict");
-//        System.setProperty("wordnet.database.dir", f.toString());
-//        //setting path for the WordNet Directory
-//
-//        WordNetDatabase database = WordNetDatabase.getFileInstance();
+
+        System.out.println("WORDS LIST:");
         for (String word : words) {
-//            System.out.println(word);
             wordsList.add(word);
+            System.out.println(word);
         }
 
         Iterator<String> itr =wordsList.iterator();
@@ -105,42 +112,39 @@ public class HomeController {
             Stopwords sampleStopword = stopwordsService.findByStopwords(w);
             if (m.find()) {
                 itr.remove();
+
             }
 
             else if (sampleStopword != null) {
                 itr.remove();
             }
+
+        }
+        System.out.println("TEMP LIST:");
+        for (String wordssss:wordsList){
+            tempList.add(wordssss);
+            System.out.println(wordssss);
         }
 
+//PLEASE INCLUDE THIS
+//        int sentimentRate=0, sentId=0;
+//        for (String senti: wordsList) {
+//            Sentiment rate = sentimentService.findBySentiment(senti);
+//            if (rate!=null){
+//                sentId= rate.getSentimentId();
+//                Sentiment getId = sentimentService.findBySentimentId(sentId);
+//                sentimentRate+=getId.getSentimentScore();
+//            }
+//        }
 
-//
-
-        int sentimentRate=0, sentId=0;
-        List<Sentiment> sents = sentimentService.findAll();
-        for (String senti: wordsList) {
-
-            Sentiment rate = sentimentService.findBySentiment(senti);
-
-            System.out.println("I WAS HERE " + senti );
-
-            if (rate!=null){
-                System.out.println("ME HEREEEEE");
-                sentId= rate.getSentimentId();
-                Sentiment getId = sentimentService.findBySentimentId(sentId);
-                sentimentRate+=getId.getRating();
-                System.out.println("rate:" + sentimentRate);
-            }
-        }
-
-
-        for (String a : words) {
+        System.out.println("STEM LIST:");
+        for (String a : wordsList) {
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(a);
             stemmer.stem();
             String steem = stemmer.getCurrent();
             stemList.add(steem);
             System.out.println(steem);
-
         }
 
         String str = String.join(" ", stemList);
@@ -150,7 +154,15 @@ public class HomeController {
             }
         }
 
-        List<Tfidf> tfidf6 = tfidfService.findAll();
+        String tmp = String.join(" ", tempList);
+        for (int n = 1; n <=3; n++) {
+            for (String ngram : ngrams(n, tmp)){
+                ngramss.add(ngram);
+            }
+        }
+
+
+
         Double love = 0.0;
         Double lra = 0.0;
         Double lto = 0.0;
@@ -169,27 +181,103 @@ public class HomeController {
                 System.out.println("word: "+tfidf1.getWord());
                 System.out.println("lto computation: "+lto);
             }
-            if(tfidf2!=null){
+            else if(tfidf2!=null){
                 lra = lra + tfidf2.getTfidfVal();
                 System.out.println("word: "+tfidf2.getWord());
                 System.out.println("lra computation: "+lra);
             }
-            if(tfidf3!=null){
+            else if(tfidf3!=null){
                 love = love + tfidf3.getTfidfVal();
                 System.out.println("word: "+tfidf3.getWord());
                 System.out.println("love computation: "+love);
             }
-            if(tfidf4!=null){
+            else if(tfidf4!=null){
                 sss = sss + tfidf4.getTfidfVal();
                 System.out.println("word: "+tfidf4.getWord());
                 System.out.println("sss computation: "+sss);
             }
 
+            else {
+                System.out.println("I WENT WORDNET");
+                ArrayList<String> al = new ArrayList<String>();
+                System.out.println("TO FIND:" + ngramsss.get(i));
+                int retval = ngramsss.indexOf(ngramsss.get(i));
+                System.out.println("RETVAL:" + retval);
+                String thisWord= ngramss.get(retval).toString();
+                System.out.println("THISWORD: "+ thisWord);
+                Synset[] synsets = database.getSynsets(thisWord);
+
+                if (synsets.length > 0) {
+                    // add elements to al, including duplicates
+                    HashSet hs = new HashSet();
+                    for (int b = 0; b < synsets.length; b++) {
+                        String[] wordForms = synsets[b].getWordForms();
+                        for (int j = 0; j < wordForms.length; j++) {
+                            al.add(wordForms[j]);
+                        }
+
+                        hs.addAll(al);
+                        al.clear();
+                        al.addAll(hs);
+                    }
+//                      showing all synsets
+//                        for (int a = 0; a < al.size(); a++) {
+//                            synonyms.add(al.get(a));
+//                            System.out.println(al.get(a));
+                }
+                            for (String a : al) {
+                                PorterStemmer stemmer = new PorterStemmer();
+                                stemmer.setCurrent(a);
+                                stemmer.stem();
+                                String steem = stemmer.getCurrent();
+                                wordnetStem.add(steem);
+//                                System.out.println(steem);
+                            }
+                        for (int b = 0; b < wordnetStem.size(); b++) {
+                            Tfidf tfidfa = tfidfService.findByWordAndAgency(ngramsss.get(b), "LTO");
+                            Tfidf tfidfb = tfidfService.findByWordAndAgency(ngramsss.get(b), "LRA");
+                            Tfidf tfidfc = tfidfService.findByWordAndAgency(ngramsss.get(b), "PAG-IBIG");
+                            Tfidf tfidfd = tfidfService.findByWordAndAgency(ngramsss.get(b), "SSS");
+
+                            if (tfidfa != null) {
+                                lto = lto + tfidfa.getTfidfVal();
+                                System.out.println("word: " + tfidfa.getWord());
+                                System.out.println("lto computation: " + lto);
+
+                            } if (tfidfb != null) {
+                                lra = lra + tfidfb.getTfidfVal();
+                                System.out.println("word: " + tfidfb.getWord());
+                                System.out.println("lra computation: " + lra);
+
+                            } if (tfidfc != null) {
+                                love = love + tfidfc.getTfidfVal();
+                                System.out.println("word: " + tfidfc.getWord());
+                                System.out.println("love computation: " + love);
+
+                            } if (tfidfd != null) {
+                                sss = sss + tfidfd.getTfidfVal();
+                                System.out.println("word: " + tfidfd.getWord());
+                                System.out.println("sss computation: " + sss);
+
+                            }
+                            else {
+                                System.out.println(thisWord + " === NO AVAILABLE DATASET");
+                                break;
+                            }
+                        }
+
+                System.out.println("DONE WORDNET");
+                    }
+                }
+
+
             entry.put("LTO", lto);
             entry.put("LRA", lra);
             entry.put("PAG-IBIG", love);
             entry.put("SSS", sss);
-        }
+
+
+
 
         result = maxVal(entry);
 
@@ -198,28 +286,33 @@ public class HomeController {
 //        }
 
         System.out.println("-----------RESULT-------------");
-        for (Map.Entry<String, Double> e : result.entrySet()) {
-            Test test1 = new Test();
-            if(article.getAgency().equals(e.getKey())){
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
-                test1.setPredictedAgency(e.getKey());
-                test1.setResultl("CORRECT");
-                test1.setPhase("1");
-                testService.save(test1);
-                model.addAttribute("result","CORRECT");
-            }
-            else{
-                test1.setArticleid(article.getArtId());
-                test1.setActualAgency(article.getAgency());
-                test1.setPredictedAgency(e.getKey());
-                test1.setResultl("INCORRECT");
-                test1.setPhase("1");
-                testService.save(test1);
-                model.addAttribute("result","INCORRECT");
-            }
 
-        }
+        System.out.println("LTO: " + lto);
+        System.out.println("PAG-IBIG: " + love);
+        System.out.println("SSS: "+ sss);
+        System.out.println("LRA: "+ lra);
+//        for (Map.Entry<String, Double> e : result.entrySet()) {
+//            Test test1 = new Test();
+//            if(article.getAgency().equals(e.getKey())){
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("CORRECT");
+//                test1.setPhase("1");
+//                testService.save(test1);
+//                model.addAttribute("result","CORRECT");
+//            }
+//            else{
+//                test1.setArticleid(article.getArtId());
+//                test1.setActualAgency(article.getAgency());
+//                test1.setPredictedAgency(e.getKey());
+//                test1.setResultl("INCORRECT");
+//                test1.setPhase("1");
+//                testService.save(test1);
+//                model.addAttribute("result","INCORRECT");
+//            }
+//
+//        }
         return "test2";
     }
 
@@ -353,16 +446,26 @@ public class HomeController {
         Sentiment sent = new Sentiment();
         String sentiment= request.getParameter("sentiment");
         String rating = request.getParameter("rating");
-        Integer rate = Integer.valueOf(rating);
+        String scoring = request.getParameter("scoring");
+        Double score = Double.valueOf(scoring);
+            Sentiment thisSentiment = sentimentService.findBySentiment(sentiment);
 
-//        PorterStemmer stemmer = new PorterStemmer();
-//        stemmer.setCurrent(sentiment);
-//        stemmer.stem();
-//        String steem=stemmer.getCurrent();
+//        if (thisSentiment!= null) {
+//            if (thisSentiment.getSentimentScore() > score) {
+//            } else {
+//                thisSentiment.setSentimentScore(score);
+//                sentimentService.save(thisSentiment);
+//            }
+//        }
+//        else {
 
-        sent.setSentiment(sentiment);
-        sent.setRating(rate);
-        sentimentService.save(sent);
+
+            sent.setSentiment(sentiment);
+            sent.setRating(rating);
+            sent.setScoring(score);
+//        sent.setPosTagger("RB");
+            sentimentService.save(sent);
+//        }
 
         return "index";
     }
@@ -389,18 +492,9 @@ public class HomeController {
         } else {
 
             if (a.find()) {
-                System.out.println("THIS IS ABS CBN");
                 Document document = Jsoup.connect(url).get();
                 title = document.title();
                 text = document.select("div.article-content").text();
-                System.out.println("title:" + title);
-                System.out.println("article" + text);
-//                article.setTitle(title);
-//                article.setAgency(agency);
-//                article.setUrl(url);
-//                article.setContent(text);
-//                articleService.save(article);
-//                cleanContent(text);
                 int count = new StringTokenizer(text).countTokens();
                 System.out.println(count);
                 article.setArtSize(count);
@@ -411,13 +505,9 @@ public class HomeController {
                 articleService.save(article);
                 cleanContent(text);
             } else if (t.find()) {
-                System.out.println("THIS IS MANILATIMES");
                 Document document = Jsoup.connect(url).get();
                 title = document.title();
-                System.out.println("title:" + title);
                 text = document.select("div.article-wrap").text();
-
-                System.out.println("article" + text);
                 int count = new StringTokenizer(text).countTokens();
                 System.out.println(count);
                 article.setArtSize(count);
@@ -428,13 +518,9 @@ public class HomeController {
                 articleService.save(article);
                 cleanContent(text);
             } else if (m.find()) {
-                System.out.println("THIS IS MANILA BULLETIN");
                 Document document = Jsoup.connect(url).get();
                 title = document.title();
-                System.out.println("title:" + title);
                 text = document.select("article.uk-article").text();
-
-                System.out.println("article" + text);
                 int count = new StringTokenizer(text).countTokens();
                 System.out.println(count);
                 article.setArtSize(count);
@@ -471,68 +557,199 @@ public class HomeController {
         return "index";
     }
 
+    @RequestMapping("/getSentiment")
+    public String getSentiment (){
 
-//    @GetMapping(value="/getArticles")
-//    public String getArticles(Model map){
-//        List<Article> articlelist = articleService.getAll();
-//        map.addAttribute("articlelist",articlelist);
-//        return "articles";
-//    }
+        int upperCase=0, exMark=0, temp=0, repeatedSequence=0;
+        String complaint="I'm SO ANNOYED :( :( :'( right now because of the sooooo heavy traffic and I have plenty of tasks to accomplish!!!!";
+
+
+        ArrayList<String> trimmedWords= new ArrayList<String>();
+
+        String[] complaintWords = complaint.trim().split("\\s+");
+        double wordCount = complaintWords.length;
 //
-//    @GetMapping(value="/getFreq")
-//    public String getFreq(HttpServletRequest request) {
-//        int number= freService.getAll().size();
-//        int artId=Integer.parseInt(request.getParameter("artId"));
-//        List<String> allWords = new ArrayList<String>();
-//        List<Integer> allFreq = new ArrayList<Integer>();
-////        Frequency sampleFreq = freService.findByArtId(artId);
-//
-//        for (int c=0; c< number; c++){
-//            Frequency sampleFreq = freService.findByArtId(artId);
-//            String thisWord= sampleFreq.getWord();
-//            int thisFreq=sampleFreq.getFrequency();
-//            allWords.add(thisWord);
-//            allFreq.add(thisFreq);
+//        for (int k = 0; k < complaint.length(); k++) {
+//            if (wordArray(k).equals(str.toUpperCase()))
+//                upperCase++;
+//        }
+////
+
+        for (String abc:complaintWords){
+            if (!abc.contains("I")&&StringUtils.isAllUpperCase(abc)){
+               upperCase++;
+
+            }
+        }
+        Double capsRate= (double) upperCase/ (double) wordCount;
+        System.out.println("WC: "+wordCount);
+        System.out.println("UC: "+upperCase);
+        System.out.println("CR: "+capsRate);
+
+        //counts number of exclamation marks
+        for (int k = 0; k < complaint.length(); k++) {
+            if (complaint.charAt(k)=='!')
+                exMark++;
+        }
+
+        System.out.println("EM: "+ exMark);
+
+        //counts repeated sequence
+        Matcher m = Pattern.compile("(\\p{Alpha})\\1{2,}").matcher(complaint);
+        while (m.find()) {
+            repeatedSequence=m.group().length()-1;
+            System.out.println(repeatedSequence);
+            temp=temp + repeatedSequence;
+        }
+        System.out.println("RS: "+ temp);
+
+        //removes repeated characters
+//        String ourString="";
+//        for (int i=0; i<complaint.length()-1 ; i++){
+//            if(i==0){
+//                ourString = ""+complaint.charAt(i);
+//            }else{
+//                if(complaint.charAt(i-1) != complaint.charAt(i)){
+//                    ourString = ourString +complaint.charAt(i);
+//                }
+//            }
 //        }
 //
-//        return "docu";
-//    }
-//    @GetMapping(value="/getExam")
-//    public String getExam(Model map){
-////        Ngram ngram =findbyAll();
-//        List <Article> arts = articleService.getAll();
-//        List <Ngram> ngram = ngramService.getAll();
-//        List <Frequency> freq = freService.getAll();
-//        List <Frequency> temp = new ArrayList<>();
-////        for (int j=0; j<freq.size(); j++) {
-////            for (int i = 0; i < freq.size(); i++) {
-////                temp = freService.findByFreqId(freq.get(i).getNgramId());
-////                System.out.println(temp);
-////
-////            }
-////        }
-//////                Frequency sampleFreq= freService.findByNgramId(temp);
-////                System.out.println(freq.get(j).getFrequency());
-////            }
-//
-////        List<Ngram> ngramlist = ngramService.getAll();
-////        Ngram ngram = ngramService.getAll();
-////        Frequency freq = freService.getAll();
-////        List <Frequency> fre1 = freService.findByNgramIdandFreqId(ngram.getNgramId(), freq.getFreqId());
-//////        Collections.sort(ngramlist);
-//        map.addAttribute("freq",freq);
-//
-//        map.addAttribute("arts",arts);
-////        map.addAttribute("freq",freq);
-////        int col = wordlist.size();
-//
-//
-//        return "docu";
-//    }
-//
-////    public String error(){
-////        return "index";
-////    }
+//        System.out.println(ourString);
+
+//WORKINGGGG!!!!!
+        System.out.println(EmojiUtils.shortCodify(complaint));
+
+        String[] resultEmoji = EmojiUtils.shortCodify(complaint).trim().split(" ");
+        ArrayList <String> wordEmoticon = new ArrayList<String>();
+        Double emoticonScoring=0.0;
+        Set<String> emojis = new HashSet<String>();
+        for (int x=0; x<resultEmoji.length; x++){
+
+            Pattern pattern = Pattern.compile(":(.*?):");
+            Matcher matcher = pattern.matcher(resultEmoji[x]);
+            if (matcher.find()){
+//                System.out.println(matcher.group(1));
+                wordEmoticon.add(matcher.group(1));
+                emojis.add(matcher.group(1));
+            }
+        }
+//        Set<String> emojis = new HashSet<String>(wordEmoticon);
+        for (int aaa=0; aaa<wordEmoticon.size();aaa++){
+//            System.out.println(kat);
+            Sentiment emotion=sentimentService.findBySentiment(wordEmoticon.get(aaa));
+
+            if (emotion!=null) {
+//                HashSet hs = new HashSet();
+//                hs.addAll(emojis);
+//                emojis.clear();
+//                emojis.addAll(hs);
+
+                Double theScore = emotion.getScoring();
+                System.out.println("THE SCORE:" + theScore);
+                Double ScoreTimesFrequency = theScore * Collections.frequency(wordEmoticon, wordEmoticon.get(aaa));
+                System.out.println("SCORE TIMES FREQUENCY:" + ScoreTimesFrequency);
+                emoticonScoring += ScoreTimesFrequency;
+                System.out.println("EMOTION SCORING: " + emoticonScoring);
+                //System.out.println(Collections.frequency(wordEmoticon, kat));
+            }
+            else
+            {
+
+            }
+
+           // Collections.frequency(ngramsss, key);
+        }
+
+
+
+//////
+        String theComplaint= complaint.toLowerCase();
+        MaxentTagger tagger = new MaxentTagger("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\models\\english-left3words-distsim.tagger");
+        String tagged = tagger.tagString(theComplaint);
+
+        System.out.println(tagged);
+        ArrayList <String> wordArray = new ArrayList<String>();
+        String [] theWords= tagged.trim().split("\\s+");
+        for (String c:theWords){
+            wordArray.add(c);
+        }
+        for (String strings:wordArray) {
+            String s1 = strings.substring(strings.indexOf("_") );
+            String test = strings.replace(s1, "");
+            trimmedWords.add(test);
+        }
+//        System.out.println("TRIMMED:");
+//        for (String wordss: trimmedWords){
+//            System.out.println(wordss);
+//        }
+
+
+        Double adv=0.0, adj=0.0, adjGrp=0.0, totalAdjGrp=0.0;
+        String pos="";
+        for (String aaa: trimmedWords) {
+
+            Sentiment senti = sentimentService.findBySentiment(aaa);
+//                pos=senti.getPosTagger();
+
+            if (senti != null) {
+                for (int i = 0; i < wordArray.size(); i++) {
+
+                    if (wordArray.get(i).contains("RB") && wordArray.get(i + 1).contains("JJ")) {
+//                    String thisWord=wordArray.get(i);
+//                        String s1 = wordArray.get(i).substring(wordArray.get(i).indexOf("_"));
+//                        String finalWord = wordArray.get(i).replace(s1, "");
+
+                        System.out.println("I WENT HEREEEEEEE");
+                        System.out.println(wordArray.get(i));
+                        System.out.println(wordArray.get(i + 1));
+                        String final1 = trimmedWords.get(i);
+                        String final2 = trimmedWords.get(i + 1);
+                        Sentiment sentiRB = sentimentService.findBySentiment(final1);
+                        Sentiment sentiJJ = sentimentService.findBySentiment(final2);
+                        adv = sentiRB.getScoring();
+                        adj = sentiJJ.getScoring();
+                        adjGrp = adv * adj;
+                        totalAdjGrp *= adjGrp;
+                        System.out.println("TEMPORARY ADJ GRP: "+ adjGrp);
+                    } else if (wordArray.get(i).contains("JJ")) {
+                        System.out.println("JJJJJ");
+                        Sentiment sentiJJ = sentimentService.findBySentiment(trimmedWords.get(i));
+                        if (sentiJJ != null) {
+                            adj = sentiJJ.getScoring();
+                            Double tempo = adj * 0.5;
+                            adjGrp *= tempo;
+                        } else {
+                            adj = 0.0;
+                        }
+                    }
+//                          else {
+//                        System.out.println("WALA NA FINISH NA");
+//                    }
+                }
+            }
+        }
+
+//        for (String key :emojis) {
+//            System.out.println(Collections.frequency(emojis, key));
+//        }
+
+//        int count = 0;
+//        String[] resultEmojiArray = EmojiUtils.shortCodify(complaint).split("\\s");;
+//        for (int i = 0; i < resultEmojiArray.length; i++)
+//        {
+//            // if match found increase count
+//            if (word.equals(a[i]))
+//                count++;
+//        }
+//        System.out.println("Total adj grp: "+totalAdjGrp);
+//        System.out.println("Adj grp: "+ adjGrp);
+
+
+
+
+        return "index";
+    }
 
     @GetMapping(value="/getAllNgrams")
     public String getNgrams(HttpServletRequest request, Model map){

@@ -13,5 +13,6 @@ import java.util.List;
 public interface SentimentRepository extends JpaRepository<Sentiment, Integer> {
     Sentiment findBySentiment(String sentiment);
     Sentiment findBySentimentId(int id);
-    List<Sentiment> findAll();
+    Sentiment findBySentimentAndPosTagger(String sentiment, String postagger);
+//    List<Sentiment> findAll();
 }

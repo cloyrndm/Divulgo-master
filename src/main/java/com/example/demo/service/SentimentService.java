@@ -17,19 +17,24 @@ public class SentimentService {
     SentimentRepository sentimentRepository;
 
 
+
     public void save(Sentiment sentiment){
 
         sentimentRepository.save(sentiment);
     }
 
 
-    public List<Sentiment> findAll(){
-
-        return sentimentRepository.findAll();
-    }
+//    public List<Sentiment> getAll(){
+//
+//        return sentimentRepository.findAll();
+//    }
 
     public Sentiment findBySentiment(String sentiment) {
         return sentimentRepository.findBySentiment(sentiment);
+    }
+
+    public Sentiment findBySentimentAndPosTagger(String sentiment, String postagger) {
+        return sentimentRepository.findBySentimentAndPosTagger(sentiment, postagger);
     }
 
     public Sentiment findBySentimentId(int id) {

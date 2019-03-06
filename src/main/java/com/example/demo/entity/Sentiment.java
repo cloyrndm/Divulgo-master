@@ -15,9 +15,20 @@ public class Sentiment {
     @GeneratedValue
     private Integer sentimentId;
     private String sentiment;
-    private Integer rating;
+    private String rating;
+    private Double sentimentScore;
+    private String posTagger;
+    private Double scoring;
 
     public Sentiment() {
+    }
+
+    public Double getScoring() {
+        return scoring;
+    }
+
+    public void setScoring(Double scoring) {
+        this.scoring = scoring;
     }
 
     public Integer getSentimentId() {
@@ -36,11 +47,27 @@ public class Sentiment {
         this.sentiment = sentiment;
     }
 
-    public Integer getRating() {
+    public String getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public Double getSentimentScore() {
+        return sentimentScore;
+    }
+
+    public void setSentimentScore(Double sentimentScore) {
+        this.sentimentScore = sentimentScore;
+    }
+
+    public String getPosTagger() {
+        return posTagger;
+    }
+
+    public void setPosTagger(String posTagger) {
+        this.posTagger = posTagger;
     }
 }

@@ -266,7 +266,7 @@
                                                             <br>
                                                             <div class="col-12 col-md-9">
                                                                 <select name="agency" id="select" class="form-control">
-                                                                    <option value="0">Please select</option>
+                                                                    <option value="">Please select</option>
                                                                     <option value="LTO">LTO</option>
                                                                     <option value="LRA">LRA</option>
                                                                     <option value="PAG-IBIG">PAG-IBIG</option>
@@ -311,33 +311,41 @@
                                             <div class="card-header">
                                                 <strong>Input</strong> Complaint
                                                 <div class="card-body card-block">
-                                                    <form action="/adtrain" method="POST">
+                                                    <form action="/getSentiment" method="POST">
 
                                                         <div class="row form-group">
                                                             <div class="col col-sm-12">
                                                                 <label for="text-input" class=" form-control-label">Complaint</label>
                                                             </div>
-                                                            <div class="col col-sm-12">
-                                                                <input type="text" name="complaint" placeholder="URL" class="form-control">
-
+                                                            <div class="col-md-9">
+                                                                <textarea id="textarea-input" name="complaint" rows="9" cols="80" placeholder="Content" class="form-control"></textarea>
                                                             </div>
                                                         </div>
+                                                        <!--<div class="row form-group">-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<label for="text-input" class=" form-control-label">Complaint</label>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<input type="text" name="complaint" placeholder="URL" class="form-control">-->
 
-                                                        <div class="row form-group">
-                                                            <div class="col col-md-3">
-                                                                <label for="select" class=" form-control-label">Select</label>
-                                                            </div>
-                                                            <br>
-                                                            <div class="col-12 col-md-9">
-                                                                <select name="agency" id="select" class="form-control">
-                                                                    <option value="0">Please select</option>
-                                                                    <option value="LTO">LTO</option>
-                                                                    <option value="LRA">LRA</option>
-                                                                    <option value="PAG-IBIG">PAG-IBIG</option>
-                                                                    <option value="SSS">SSS</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="row form-group">-->
+                                                            <!--<div class="col col-md-3">-->
+                                                                <!--<label for="select" class=" form-control-label">Select</label>-->
+                                                            <!--</div>-->
+                                                            <!--<br>-->
+                                                            <!--<div class="col-12 col-md-9">-->
+                                                                <!--<select name="agency" id="select" class="form-control">-->
+                                                                    <!--<option value="0">Please select</option>-->
+                                                                    <!--<option value="LTO">LTO</option>-->
+                                                                    <!--<option value="LRA">LRA</option>-->
+                                                                    <!--<option value="PAG-IBIG">PAG-IBIG</option>-->
+                                                                    <!--<option value="SSS">SSS</option>-->
+                                                                <!--</select>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
 
                                                         <div class="card-footer" th:inline="text">
                                                             <button type="submit" class="btn btn-primary btn-sm">
@@ -363,26 +371,41 @@
                                     <div class="col-md-9">
                                         <div class="card">
                                             <div class="card-header">
-                                                <strong>Input</strong> Information
+                                                <strong>Input</strong> Complaint
                                                 <div class="card-body card-block">
-                                                    <form action="/postText" method="POST">
+                                                    <form action="/getSentiment" method="POST">
 
-                                                        <div class="row form-group">
-                                                            <div class="col col-sm-12">
-                                                                <label for="text-input" class=" form-control-label">Sentiment</label>
-                                                            </div>
-                                                            <div class="col col-sm-12">
-                                                                <input type="text" placeholder="Sentiment" name="sentiment" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row form-group">
-                                                            <div class="col col-sm-12">
-                                                                <label for="text-input" class=" form-control-label">Rating</label>
-                                                            </div>
-                                                            <div class="col col-sm-12">
-                                                                <input type="text" placeholder="Rating" name="rating" class="form-control">
-                                                            </div>
-                                                        </div>
+                                                        <!--<div class="row form-group">-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<label for="text-input" class=" form-control-label">Complaint</label>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<input type="text" placeholder="Complaint" name="complaint" class="form-control">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+
+                                                        <!--<div class="row form-group">-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<label for="text-input" class=" form-control-label">Scoring</label>-->
+                                                            <!--</div>-->
+                                                            <!--<div class="col col-sm-12">-->
+                                                                <!--<input type="text" placeholder="Scoring" name="scoring" class="form-control">-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="row form-group">-->
+                                                            <!--<div class="col col-md-3">-->
+                                                                <!--<label for="select" class=" form-control-label">Select</label>-->
+                                                            <!--</div>-->
+                                                            <!--<br>-->
+                                                            <!--<div class="col-12 col-md-9">-->
+                                                                <!--<select name="rating" id="select" class="form-control">-->
+                                                                    <!--<option value="">Please select</option>-->
+                                                                    <!--<option value="Light">Light</option>-->
+                                                                    <!--<option value="Medium">Medium</option>-->
+                                                                    <!--<option value="Intense">Intense</option>-->
+                                                                <!--</select>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
                                                         <!--<div class="row form-group">-->
                                                             <!--<div class="col col-sm-12">-->
                                                                 <!--<label for="text-input" class=" form-control-label">Title</label>-->
@@ -399,14 +422,14 @@
                                                                 <!--<input type="text" placeholder="URL" name="url" class="form-control">-->
                                                             <!--</div>-->
                                                         <!--</div>-->
-                                                        <!--<div class="row form-group">-->
-                                                            <!--<div class="col col-sm-12">-->
-                                                                <!--<label for="text-input" class=" form-control-label">Content</label>-->
-                                                            <!--</div>-->
-                                                            <!--<div class="col-md-9">-->
-                                                                <!--<textarea id="textarea-input" name="content" rows="9" cols="80" placeholder="Content" class="form-control"></textarea>-->
-                                                            <!--</div>-->
-                                                        <!--</div>-->
+                                                        <div class="row form-group">
+                                                            <div class="col col-sm-12">
+                                                                <label for="text-input" class=" form-control-label">Complaint</label>
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <textarea id="textarea-input" name="complaint" rows="9" cols="80" placeholder="Content" class="form-control"></textarea>
+                                                            </div>
+                                                        </div>
                                                         <!--<div class="row form-group">-->
                                                             <!--<div class="col col-md-3">-->
                                                                 <!--<label for="select" class=" form-control-label">Select</label>-->

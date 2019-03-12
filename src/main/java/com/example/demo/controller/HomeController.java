@@ -5,7 +5,10 @@ import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import edu.smu.tspell.wordnet.Synset;
 import edu.smu.tspell.wordnet.WordNetDatabase;
+import edu.stanford.nlp.ling.Sentence;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.trees.*;
 import emoji4j.EmojiUtils;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +63,10 @@ public class HomeController {
 
     @Autowired
     SentimentService sentimentService;
+
+    @Autowired
+    SentimentDivService sentimentdivService;
+
 
 
     @RequestMapping("/registration")
@@ -556,13 +563,31 @@ public class HomeController {
 
         return "index";
     }
+    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+    {
 
+        // Create a new LinkedHashSet
+        Set<T> set = new LinkedHashSet<>();
+
+        // Add the elements to set
+        set.addAll(list);
+
+        // Clear the list
+        list.clear();
+
+        // add the elements of set
+        // with no duplicates to the list
+        list.addAll(set);
+
+        // return the list
+        return list;
+    }
     @RequestMapping("/getSentiment")
-    public String getSentiment (){
+    public String getSentiment (HttpServletRequest request){
 
-        int upperCase=0, exMark=0, temp=0, repeatedSequence=0;
-        String complaint="I'm SO ANNOYED :( :( :'( right now because of the sooooo heavy traffic and I have plenty of tasks to accomplish!!!!";
-
+        int upperCase=0, exMark=0, temp=0, rsFound=0;
+//        String complaint="I'm SO ANNOYED :( :'( right now because of the sooooo heavy traffic and I have plenty of tasks to accomplish!!!!";
+        String complaint=request.getParameter("complaint");
 
         ArrayList<String> trimmedWords= new ArrayList<String>();
 
@@ -591,18 +616,30 @@ public class HomeController {
             if (complaint.charAt(k)=='!')
                 exMark++;
         }
-
+            if (exMark==0){
+                exMark=1;
+            }
         System.out.println("EM: "+ exMark);
 
         //counts repeated sequence
-        Matcher m = Pattern.compile("(\\p{Alpha})\\1{2,}").matcher(complaint);
+        Matcher m = Pattern.compile("([a-zA-Z\\d])\\1{2,}").matcher(complaint);
         while (m.find()) {
-            repeatedSequence=m.group().length()-1;
-            System.out.println(repeatedSequence);
-            temp=temp + repeatedSequence;
+            System.out.println(m.group());
+            rsFound++;
         }
-        System.out.println("RS: "+ temp);
 
+        Matcher matcher = Pattern.compile("\\p{Punct}{3,}").matcher(complaint);
+        while (matcher.find()){
+            System.out.println(matcher.group());
+            rsFound++;
+        }
+
+        System.out.println("ISFOUND: "+rsFound);
+        if (rsFound==0) {
+            rsFound = 1;
+        }
+
+//        System.out.println(rsFound);
         //removes repeated characters
 //        String ourString="";
 //        for (int i=0; i<complaint.length()-1 ; i++){
@@ -612,6 +649,7 @@ public class HomeController {
 //                if(complaint.charAt(i-1) != complaint.charAt(i)){
 //                    ourString = ourString +complaint.charAt(i);
 //                }
+
 //            }
 //        }
 //
@@ -619,7 +657,7 @@ public class HomeController {
 
 //WORKINGGGG!!!!!
         System.out.println(EmojiUtils.shortCodify(complaint));
-
+        int ctr=0, opinionCtr=0;
         String[] resultEmoji = EmojiUtils.shortCodify(complaint).trim().split(" ");
         ArrayList <String> wordEmoticon = new ArrayList<String>();
         Double emoticonScoring=0.0;
@@ -627,112 +665,181 @@ public class HomeController {
         for (int x=0; x<resultEmoji.length; x++){
 
             Pattern pattern = Pattern.compile(":(.*?):");
-            Matcher matcher = pattern.matcher(resultEmoji[x]);
-            if (matcher.find()){
-//                System.out.println(matcher.group(1));
-                wordEmoticon.add(matcher.group(1));
-                emojis.add(matcher.group(1));
+            Matcher matcher1 = pattern.matcher(resultEmoji[x]);
+            if (matcher1.find()){
+                wordEmoticon.add(matcher1.group(1));
+                emojis.add(matcher1.group(1));
             }
         }
-//        Set<String> emojis = new HashSet<String>(wordEmoticon);
-        for (int aaa=0; aaa<wordEmoticon.size();aaa++){
-//            System.out.println(kat);
-            Sentiment emotion=sentimentService.findBySentiment(wordEmoticon.get(aaa));
 
-            if (emotion!=null && (wordEmoticon.get(aaa+1)!= wordEmoticon.get(aaa))) {
-//                HashSet hs = new HashSet();
-//                hs.addAll(emojis);
-//                emojis.clear();
-//                emojis.addAll(hs);
-
-                Double theScore = emotion.getScoring();
-                System.out.println("THE SCORE:" + theScore);
-                Double ScoreTimesFrequency = theScore * Collections.frequency(wordEmoticon, wordEmoticon.get(aaa));
-                System.out.println("SCORE TIMES FREQUENCY:" + ScoreTimesFrequency);
-                emoticonScoring += ScoreTimesFrequency;
-                System.out.println("EMOTION SCORING: " + emoticonScoring);
-                //System.out.println(Collections.frequency(wordEmoticon, kat));
-            }
-            else
-            {
-
-            }
-
-           // Collections.frequency(ngramsss, key);
+        ArrayList<String>newList = removeDuplicates(wordEmoticon);
+        Set<String> unique = new HashSet<String>(wordEmoticon);
+        Double emotionScoring=0.0;
+        System.out.println("REMOVE DUPLICATES!!!");
+        for (String aaaa:newList){
+            System.out.println(aaaa);
         }
-
-
-
-//////
-        String theComplaint= complaint.toLowerCase();
-        MaxentTagger tagger = new MaxentTagger("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\models\\english-left3words-distsim.tagger");
-        String tagged = tagger.tagString(theComplaint);
-
-        System.out.println(tagged);
-        ArrayList <String> wordArray = new ArrayList<String>();
-        String [] theWords= tagged.trim().split("\\s+");
-        for (String c:theWords){
-            wordArray.add(c);
-        }
-        for (String strings:wordArray) {
-            String s1 = strings.substring(strings.indexOf("_") );
-            String test = strings.replace(s1, "");
-            trimmedWords.add(test);
-        }
-//        System.out.println("TRIMMED:");
-//        for (String wordss: trimmedWords){
-//            System.out.println(wordss);
-//        }
-
-
-        Double adv=0.0, adj=0.0, adjGrp=0.0, totalAdjGrp=0.0;
-        String pos="";
-        for (String aaa: trimmedWords) {
-
-            Sentiment senti = sentimentService.findBySentiment(aaa);
-//                pos=senti.getPosTagger();
-
-            if (senti != null) {
-                for (int i = 0; i < wordArray.size(); i++) {
-
-                    if (wordArray.get(i).contains("RB") && wordArray.get(i + 1).contains("JJ")) {
-//                    String thisWord=wordArray.get(i);
-//                        String s1 = wordArray.get(i).substring(wordArray.get(i).indexOf("_"));
-//                        String finalWord = wordArray.get(i).replace(s1, "");
-
-                        System.out.println("I WENT HEREEEEEEE");
-                        System.out.println(wordArray.get(i));
-                        System.out.println(wordArray.get(i + 1));
-                        String final1 = trimmedWords.get(i);
-                        String final2 = trimmedWords.get(i + 1);
-                        Sentiment sentiRB = sentimentService.findBySentiment(final1);
-                        Sentiment sentiJJ = sentimentService.findBySentiment(final2);
-                        adv = sentiRB.getScoring();
-                        adj = sentiJJ.getScoring();
-                        adjGrp = adv * adj;
-                        totalAdjGrp *= adjGrp;
-                        System.out.println("TEMPORARY ADJ GRP: "+ adjGrp);
-                    } else if (wordArray.get(i).contains("JJ")) {
-                        System.out.println("JJJJJ");
-                        Sentiment sentiJJ = sentimentService.findBySentiment(trimmedWords.get(i));
-                        if (sentiJJ != null) {
-                            adj = sentiJJ.getScoring();
-                            Double tempo = adj * 0.5;
-                            adjGrp *= tempo;
-                        } else {
-                            adj = 0.0;
-                        }
-                    }
-//                          else {
-//                        System.out.println("WALA NA FINISH NA");
-//                    }
+//
+        for (int aaa=0; aaa<wordEmoticon.size();aaa++) {
+            Sentiment emotion = sentimentService.findBySentiment(newList.get(aaa));
+            Double theScore = 0.0;
+            for (String key : unique) {
+                List<SentimentDiv> sentiWordNet = sentimentdivService.findBySynsetTerms(key);
+                if (sentiWordNet != null) {
+                    Double posScore = sentiWordNet.get(0).getPosScore();
+                    Double negScore = sentiWordNet.get(0).getNegScore() * -1.0;
+                    System.out.println("+ SCORE:" + posScore);
+                    System.out.println("- SCORE:" + negScore);
+                    theScore = posScore + negScore;
+//
+                    System.out.println(Collections.frequency(wordEmoticon, key));
+                    Double ScoreTimesFrequency = theScore * (Collections.frequency(wordEmoticon, key));
+                    System.out.println("SCORE TIMES FREQUENCY:" + ScoreTimesFrequency);
+                    emoticonScoring += ScoreTimesFrequency;
+                    System.out.println("EMOTION SCORING: " + emoticonScoring);
+                    ctr++;
+//                    System.out.println("ADD OPINION AND EMOTICON ");
                 }
             }
         }
+            String theComplaint = complaint.toLowerCase();
 
-//        for (String key :emojis) {
-//            System.out.println(Collections.frequency(emojis, key));
-//        }
+///////START OF ADVMOD
+
+            LexicalizedParser lp = LexicalizedParser.loadModel(
+                    "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+            String[] wordss = theComplaint.trim().split("\\s+");
+            ArrayList<String> trimmedWords1 = new ArrayList<String>();
+            ArrayList<String> w2 = new ArrayList<String>();
+            ArrayList<String> wording = new ArrayList<String>();
+            TreebankLanguagePack tlp = new PennTreebankLanguagePack();
+            GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+            Tree parse = lp.apply(Sentence.toWordList(wordss));
+            GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
+            List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
+
+            System.out.println(tdl);
+            String thisFinal = tdl.toString();
+//
+            HashMap<String, String> advmodWords = new HashMap<String, String>();
+            String[] theWords1 = thisFinal.split("\\),");
+            String[] advmod = null;
+            for (String c : theWords1) {
+                wording.add(c);
+            }
+            ArrayList<String> matchList = new ArrayList<String>();
+            for (String a : wording) {
+                if (a.contains("advmod")) {
+                    System.out.println("I WENT HERE");
+
+                    String t = a.substring(a.indexOf('(') + 1);
+                    System.out.println(t);
+                    w2.add(t);
+                }
+            }
+            System.out.println("W2:");
+            for (String c : w2) {
+                advmod = c.replaceAll("[^a-zA-Z ]", " ").split("\\s+");
+//            String [] advmodWords= ab.split("//s");
+                trimmedWords1.add(Arrays.toString(advmod));
+                System.out.println(Arrays.toString(advmod));
+            }
+
+            for (int a = 0; a < trimmedWords1.size(); a++) {
+                System.out.println("ADVMOD: " + trimmedWords1.get(a));
+                String k = trimmedWords1.get(a).substring(trimmedWords1.get(a).indexOf("[") + 1, trimmedWords1.get(a).indexOf(","));
+                String v = trimmedWords1.get(a).substring(trimmedWords1.get(a).indexOf(",") + 1, trimmedWords1.get(a).indexOf("]"));
+                advmodWords.put(k, v);
+            }
+
+            System.out.println(advmodWords);
+
+////END OF ADVMOD
+
+
+            MaxentTagger tagger = new MaxentTagger("C:\\Users\\Katrina\\Desktop\\Divulgo-master-master\\Divulgo-master-master\\models\\english-left3words-distsim.tagger");
+            String tagged = tagger.tagString(theComplaint);
+
+
+            System.out.println(tagged);
+            ArrayList<String> wordArray = new ArrayList<String>();
+            String[] theWords = tagged.trim().split("\\s+");
+            for (String c : theWords) {
+                wordArray.add(c);
+            }
+            for (String strings : wordArray) {
+                String s1 = strings.substring(strings.indexOf("_"));
+                String test = strings.replace(s1, "");
+                trimmedWords.add(test);
+            }
+            Double adv = 0.0, adj = 0.0, adjGrp = 0.0, totalAdjGrp = 1.0, n = 0.0, p = 0.0, n1 = 0.0, p1 = 0.0;
+            String pos = "";
+            Double realScore1 = 0.0, realScore2 = 0.0;
+//        for (String aaa: trimmedWords) {
+
+            for (int i = 0; i < wordArray.size(); i++) {
+                if (wordArray.get(i).contains("JJ")) {
+                    System.out.println("I WENT HEREEEEEEE");
+                    System.out.println(wordArray.get(i));
+                    String final1 = trimmedWords.get(i);
+                    System.out.println(final1);
+                    // Sentiment sentiRB = sentimentService.findBySentiment(final1);
+                    String value = advmodWords.get(final1);
+                    System.out.println(value);
+                    String ourfinal1 = final1 + "#1";
+                    String ourvalue = value + "#1";
+                    if (value == null) {
+                        List<SentimentDiv> sentival = sentimentdivService.findBySynsetTerms(ourfinal1);
+                        System.out.println("IM HERE NULL");
+                        n = sentival.get(0).getNegScore() * -1.0;
+                        p = sentival.get(0).getPosScore();
+                        Double realScore = n + p;
+                        adj = realScore * 0.5;
+                        System.out.println("ADJ= " + adj);
+                        totalAdjGrp++;
+                    } else {
+                        System.out.println("IM HERE NOT NULL");
+                        List<SentimentDiv> theVal1 = sentimentdivService.findBySynsetTerms(ourfinal1);
+                        List<SentimentDiv> theVal2 = sentimentdivService.findBySynsetTerms(ourvalue);
+//                            if (theVal1.size() >1) {
+                        n = theVal1.get(0).getNegScore() * -1.0;
+                        System.out.println(n);
+
+
+                        p = theVal1.get(0).getPosScore();
+                        System.out.println(p);
+                        realScore1 = n + p;
+                        n1 = theVal1.get(0).getNegScore() * -1.0;
+                        System.out.println(n1);
+                        p1 = theVal1.get(0).getPosScore();
+                        System.out.println(p1);
+                        realScore2 = n1 + p1;
+                        adjGrp = realScore1 * realScore2;
+                        totalAdjGrp++;
+                    }
+                }
+//            }
+
+            }
+
+//        int finalCtr= (opinionCtr/2) + ctr;
+//            if (exMark != 0 && temp != 0) {
+                Double logExclamation = Math.log(exMark);
+                Double logRepeated = Math.log(rsFound);
+                Double firstFm = (1 + (capsRate + logExclamation + logRepeated) / 3) / ctr;
+                Double secondFm = ctr * totalAdjGrp + emoticonScoring;
+                Double finalFm = firstFm * secondFm;
+                System.out.println("FINAL CTR: " + ctr);
+                System.out.println("TOTAL ADJ GRP: " + totalAdjGrp);
+                System.out.println("EMOTION SCORING: " + emoticonScoring);
+                System.out.println("OPINION AND EMOTICONS: " + ctr);
+                System.out.println("FIRST: " + firstFm);
+                System.out.println("SECOND: " + secondFm);
+                System.out.println("FINAL: " + finalFm);
+//            }
+
+
+
 
 //        int count = 0;
 //        String[] resultEmojiArray = EmojiUtils.shortCodify(complaint).split("\\s");;

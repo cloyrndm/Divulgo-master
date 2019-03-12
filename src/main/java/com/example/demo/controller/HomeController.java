@@ -56,8 +56,8 @@ public class HomeController {
     @Autowired
     StopwordsService stopwordsService;
 
-    @Autowired
-    SentimentService sentimentService;
+//    @Autowired
+//    SentimentService sentimentService;
 
     @Autowired
     ComplaintService complaintService;
@@ -79,27 +79,27 @@ public class HomeController {
         return "test";
     }
 
-    //continue later
     @RequestMapping("/goUnclassified")
-    public String goUnclasssified(){
-//        List
-//
+    public String goUnclassified(Model model){
+        List<Complaint> complaint = complaintService.findByAgencyAndTrainStatus("unclassified",null);
+        model.addAttribute("complaint",complaint);
         return "unclassified";
     }
 
     @RequestMapping("/govUnclassified")
     public String govUnclasssified(HttpServletRequest request, Model model){
-        String complaint = request.getParameter("complaint");
+        Article article = new Article();
         String agency = request.getParameter("agency");
-        String id = request.getParameter("id");
-        long idd = Long.valueOf(id);
+        String complaint_id = request.getParameter("id");
+        String complaint = request.getParameter("complaint");
 
-        Complaint complaint1 = complaintService.findByComplaintId(idd);
-        complaint1.setAgency(agency);
-        complaintService.save(complaint1);
+        Complaint complaint2 = complaintService.findByComplaintId(Long.valueOf(complaint_id));
+        complaint2.setAgency(agency);
+        complaintService.save(complaint2);
 
         return "unclassified";
     }
+
 
     @RequestMapping("/goTrain")
     public String goTrain(Model model){
@@ -355,9 +355,9 @@ public class HomeController {
             entry.put("PAG-IBIG", love);
             entry.put("SSS", sss);
 //            entry.put("UNCLASSIFIED",val);
-        }
+    }
 
-        result = maxVal(entry);
+    result = maxVal(entry);
 
         for (Map.Entry<String, Double> entryy : result.entrySet()) {
             System.out.println("Result: "+entryy.getKey()+" : "+entryy.getValue());
@@ -373,7 +373,7 @@ public class HomeController {
                 test1.setActualAgency(agency);
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("CORRECT");
-                test1.setPhase("1.1");
+                test1.setPhase("30");
                 testService.save(test1);
                 model.addAttribute("result","CORRECT");
             }
@@ -382,7 +382,7 @@ public class HomeController {
                 test1.setActualAgency(agency);
                 test1.setPredictedAgency(e.getKey());
                 test1.setResultl("INCORRECT");
-                test1.setPhase("1.1");
+                test1.setPhase("30");
                 testService.save(test1);
                 model.addAttribute("result","INCORRECT");
             }
@@ -521,19 +521,19 @@ public class HomeController {
 //        article.setContent(content);
 //        articleService.save(article);
 //        cleanContent(content);
-        Sentiment sent = new Sentiment();
-        String sentiment= request.getParameter("sentiment");
-        String rating = request.getParameter("rating");
-        Integer rate = Integer.valueOf(rating);
+//        Sentiment sent = new Sentiment();
+//        String sentiment= request.getParameter("sentiment");
+//        String rating = request.getParameter("rating");
+//        Integer rate = Integer.valueOf(rating);
 
 //        PorterStemmer stemmer = new PorterStemmer();
 //        stemmer.setCurrent(sentiment);
 //        stemmer.stem();
 //        String steem=stemmer.getCurrent();
 
-        sent.setSentiment(sentiment);
-        sent.setRating(rate);
-        sentimentService.save(sent);
+//        sent.setSentiment(sentiment);
+//        sent.setRating(rate);
+//        sentimentService.save(sent);
 
         return "index";
     }

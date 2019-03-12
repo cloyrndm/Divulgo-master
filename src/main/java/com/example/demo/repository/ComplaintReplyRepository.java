@@ -18,4 +18,5 @@ public interface ComplaintReplyRepository extends JpaRepository<ComplaintReply,L
     List<ComplaintReply> findByAgency(String agency);
     List<ComplaintReply> findByAgencyAndUserid(String agency, Long id);
 //    List<ComplaintReply> findByStatus(String c);
+//    List<ComplaifindByAgencyAndTrainStatus
 }

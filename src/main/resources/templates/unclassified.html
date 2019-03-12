@@ -113,7 +113,6 @@
                         <a href="/goUnclassified">
                             <i class="fas fa-copy"></i>Unclassified</a>
                     </li>
-
                 </ul>
             </nav>
         </div>
@@ -153,18 +152,28 @@
                                     <tr>
                                         <th>Complaint ID</th>
                                         <th>Complaint</th>
+                                        <th>Agency</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr th:each="i: ${complaint}">
-                                        <form method = "POST" action = "govtrain">
-                                        <td th:text="${i.complaint_id}"></td>
-                                        <td th:text="${i.user_complaint}"></td>
+                                        <form method = "POST" action = "govUnclassified">
+                                            <td th:text="${i.complaint_id}"></td>
+                                            <td th:text="${i.user_complaint}"></td>
                                             <input type="hidden" th:value="${i.complaint_id}" name="id">
                                             <input type="hidden" th:value="${i.user_complaint}" name="complaint">
                                             <td>
-                                            <button type="submit" id="erase1">Train</button>
+                                                <select name="agency" id="select" class="form-control">
+                                                    <option value="0">Please select</option>
+                                                    <option value="LTO">LTO</option>
+                                                    <option value="LRA">LRA</option>
+                                                    <option value="PAG-IBIG">PAG-IBIG</option>
+                                                    <option value="SSS">SSS</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button type="submit" id="erase1">Submit</button>
                                             </td>
 
                                         </form>

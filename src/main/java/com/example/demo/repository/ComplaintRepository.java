@@ -15,7 +15,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint,Long> {
     List<Complaint> findByAgency(String type);
     List<Complaint> findByAgencyAndStatus(String agency, String stat);
     List<Complaint> findByStatusAndTrainStatus(String status, String tsat);
-
+    List<Complaint> findByAgencyAndTrainStatus(String a,String tsat);
     List<Complaint> findByStatus(String status);
 //    List<Complaint> findByTrainStatus(String s);
 //

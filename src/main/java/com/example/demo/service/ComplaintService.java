@@ -26,6 +26,10 @@ public class ComplaintService {
     }
 
     public List<Complaint> findByStatusAndTrainStatus(String status, String tsat){
-        return complaintRepository.findByStatusAndTrainStatus("1",null);
+        return complaintRepository.findByStatusAndTrainStatus(status,tsat);
+    }
+
+    public List<Complaint> findByAgencyAndTrainStatus(String agency, String tsat){
+        return complaintRepository.findByAgencyAndTrainStatus(agency,tsat);
     }
 }
